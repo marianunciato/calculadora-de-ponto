@@ -10,7 +10,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar }) {
 
       <div className="bg-[#1e2030] rounded-xl p-6 flex flex-col items-center gap-2">
         <span className="text-6xl font-thin tracking-widest">{saida}</span>
-        <p className="text-xs tracking-widest text-white/40 uppercase">
+        <p className="text-xs tracking-widest text-white/70 uppercase">
           Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
           <strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
         </p>

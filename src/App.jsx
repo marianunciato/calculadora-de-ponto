@@ -11,7 +11,7 @@ import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
 export default function App() {
-  const [jornada, setJornada] = useState('08:00')
+  const [jornada, setJornada] = useState('')
   const [entrada, setEntrada] = useState('')
   const [almoco, setAlmoco] = useState('')
   const [retorno, setRetorno] = useState('')
@@ -47,7 +47,7 @@ export default function App() {
             saida={saida}
             faltam={faltam}
             alertas={alertas}
-            onLimpar={() => { setEntrada(''); setAlmoco(''); setRetorno('') }}
+            onLimpar={() => { setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 }) }}
           />
         </div>
       </main>
