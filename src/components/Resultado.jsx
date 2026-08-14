@@ -61,7 +61,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
       <div className="flex gap-3">
         <button
           onClick={onLimpar}
-          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1"
+          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
         >
           <Delete fontSize="small" />
           Limpar
@@ -69,7 +69,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
         <button
           onClick={onRegistrar}
           disabled={!entrada || !almoco || !retorno}
-          className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1"
+          className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
         >
           <SaveIcon fontSize="small" />
           Registrar Dia
@@ -79,7 +79,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
         href="https://stou.ifractal.com.br/fulltime//phonto.php"
         target="_blank"
         rel="noreferrer"
-        className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase w-full"
+        className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
       >
         Ir para página de ponto
       </a>

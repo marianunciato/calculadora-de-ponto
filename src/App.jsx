@@ -10,6 +10,7 @@ import Resultado from './components/Resultado'
 import Footer from './components/Footer'
 import PreferenciasModal from './components/PreferenciasModal'
 import Historico from './components/Historico'
+import MensagemDiaria from './components/MensagemDiaria'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
@@ -35,7 +36,7 @@ export default function App() {
     catch { return [] }
   })
   const [saidaReal, setSaidaReal] = useState('')
-  const notificadoRef = useRef(false)
+  const notificadoRef = useRef(true)
 
   function salvarPrefs(novasPrefs) {
     setPrefs(novasPrefs)
@@ -103,7 +104,9 @@ export default function App() {
       <Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} />
       <main className={`flex-1 flex justify-center p-6 ${tab === 'banco' ? 'items-start' : 'items-center'}`}>
         {tab === 'calculadora' ? (
-          <div className="bg-[#161827] rounded-3xl p-6 w-full max-w-2xl flex flex-col gap-4">
+          <div className="w-full max-w-2xl flex flex-col gap-4">
+            <MensagemDiaria />
+            <div className="bg-[#161827] rounded-3xl p-6 flex flex-col gap-4">
             <JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
@@ -126,6 +129,7 @@ export default function App() {
                 ;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
               }}
             />
+            </div>
           </div>
         ) : (
           <Historico
