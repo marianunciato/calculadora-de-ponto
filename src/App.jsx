@@ -11,13 +11,20 @@ import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
 export default function App() {
-  const [jornada, setJornada] = useState('')
-  const [entrada, setEntrada] = useState('')
-  const [almoco, setAlmoco] = useState('')
-  const [retorno, setRetorno] = useState('')
+  const [jornada, setJornada] = useState(() => localStorage.getItem('jornada') ?? '')
+  const [entrada, setEntrada] = useState(() => localStorage.getItem('entrada') ?? '')
+  const [almoco, setAlmoco] = useState(() => localStorage.getItem('almoco') ?? '')
+  const [retorno, setRetorno] = useState(() => localStorage.getItem('retorno') ?? '')
   const [saida, setSaida] = useState('00:00')
   const [faltam, setFaltam] = useState({ horas: 0, minutos: 0 })
   const [alertas, setAlertas] = useState([])
+
+  useEffect(() => {
+    localStorage.setItem('jornada', jornada)
+    localStorage.setItem('entrada', entrada)
+    localStorage.setItem('almoco', almoco)
+    localStorage.setItem('retorno', retorno)
+  }, [jornada, entrada, almoco, retorno])
 
   useEffect(() => {
     const jornadaMins = toMinutes(jornada)
@@ -47,7 +54,7 @@ export default function App() {
             saida={saida}
             faltam={faltam}
             alertas={alertas}
-            onLimpar={() => { setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 }) }}
+            onLimpar={() => { setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 }); ['entrada','almoco','retorno'].forEach(k => localStorage.removeItem(k)) }}
           />
         </div>
       </main>
