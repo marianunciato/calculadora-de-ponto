@@ -15,7 +15,9 @@ export default function Historico({ registros, onLimparHistorico }) {
 
       <div className="bg-[#1e2030] rounded-2xl p-6 flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60 mb-2">Saldo Total</p>
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60 mb-2">
+            {bancoTotal >= 0 ? 'Banco de Horas' : 'Horas Devendo'}
+          </p>
           <span className={`text-5xl font-thin tracking-widest ${bancoTotal >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {saldoLabel(bancoTotal)}
           </span>

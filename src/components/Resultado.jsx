@@ -68,7 +68,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
         </button>
         <button
           onClick={onRegistrar}
-          disabled={!entrada}
+          disabled={!entrada || !almoco || !retorno}
           className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1"
         >
           <SaveIcon fontSize="small" />

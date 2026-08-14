@@ -46,9 +46,10 @@ export default function App() {
   }
 
   function registrarPonto() {
-    if (!entrada || !saida || saida === '00:00') return
-    const hoje = new Date().toLocaleDateString('pt-BR')
-    const saidaFinal = saidaReal || saida
+    if (!entrada || !almoco || !retorno) return
+    const agora = new Date()
+    const saidaFinal = `${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`
+    const hoje = agora.toLocaleDateString('pt-BR')
     const jornadaMins = toMinutes(jornada)
     const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
     const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(entrada) - Math.max(0, intervaloMins)
@@ -58,17 +59,6 @@ export default function App() {
     setHistorico(atualizado)
     localStorage.setItem('historico', JSON.stringify(atualizado))
   }
-
-  useEffect(() => {
-    if (faltam.horas === 0 && faltam.minutos === 0 && entrada) {
-      setSaidaReal(prev => prev || saida)
-    }
-  }, [faltam, entrada, saida])
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', registrarPonto)
-    return () => window.removeEventListener('beforeunload', registrarPonto)
-  }, [entrada, saida, almoco, retorno, jornada, historico])
 
   useEffect(() => {
     localStorage.setItem('jornada', jornada)
