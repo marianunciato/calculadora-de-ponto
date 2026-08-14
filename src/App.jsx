@@ -45,7 +45,7 @@ export default function App() {
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="bg-[#161827] rounded-2xl p-6 w-full max-w-2xl flex flex-col gap-4">
           <JornadaInput value={jornada} onChange={setJornada} />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
             <TimeInput label="Almoço" icon={<RestaurantIcon fontSize="small" />} value={almoco} onChange={setAlmoco} />
             <TimeInput label="Retorno" icon={<KeyboardReturnIcon fontSize="small" />} value={retorno} onChange={setRetorno} />
