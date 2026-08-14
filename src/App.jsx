@@ -78,6 +78,12 @@ export default function App() {
   }, [jornada, entrada, almoco, retorno])
 
   useEffect(() => {
+    if (!entrada || !almoco || !retorno) {
+      setSaida('00:00')
+      setFaltam({ horas: 0, minutos: 0 })
+      setAlertas([])
+      return
+    }
     const jornadaMins = toMinutes(jornada)
     const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
     const saidaMins = toMinutes(entrada) + jornadaMins + Math.max(0, intervaloMins)
@@ -86,7 +92,7 @@ export default function App() {
     const agoraMins = agora.getHours() * 60 + agora.getMinutes()
     const diff = saidaMins - agoraMins
     setFaltam({ horas: Math.max(0, Math.floor(diff / 60)), minutos: Math.max(0, diff % 60) })
-    setAlertas(entrada && almoco && retorno ? getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMins) : [])
+    setAlertas(getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMins))
   }, [jornada, entrada, almoco, retorno])
 
   useEffect(() => {
@@ -117,6 +123,8 @@ export default function App() {
             <Resultado
               saida={saida}
               entrada={entrada}
+              almoco={almoco}
+              retorno={retorno}
               saidaReal={saidaReal}
               onSaidaReal={setSaidaReal}
               faltam={faltam}

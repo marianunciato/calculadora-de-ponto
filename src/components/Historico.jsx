@@ -32,7 +32,7 @@ export default function Historico({ registros, onLimparHistorico }) {
           {registros.slice().reverse().map((r, i) => (
             <div key={i} className="bg-[#1e2030] rounded-xl px-4 py-3 flex items-center justify-between gap-2">
               <span className="text-sm text-white/60 w-24 shrink-0">{r.data}</span>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/50 flex-1">
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/50">
                 <span>Entrada <strong className="text-white">{r.entrada}</strong></span>
                 {r.almoco && <span>Almoço <strong className="text-white">{r.almoco}</strong></span>}
                 {r.retorno && <span>Retorno <strong className="text-white">{r.retorno}</strong></span>}

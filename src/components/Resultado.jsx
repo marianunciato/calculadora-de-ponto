@@ -4,8 +4,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { ALERTA_STYLES } from '../utils/alertas'
 import ProgressBar from './ProgressBar'
 
-export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, saidaReal, onSaidaReal }) {
-  const encerrado = entrada && faltam.horas === 0 && faltam.minutos === 0
+export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, almoco, retorno, saidaReal, onSaidaReal }) {
+  const todosPreenchidos = entrada && almoco && retorno
+  const encerrado = todosPreenchidos && faltam.horas === 0 && faltam.minutos === 0
 
   return (
     <>
@@ -14,11 +15,17 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
       </div>
 
       <div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2">
-        <span className="text-6xl font-thin tracking-widest">{saida}</span>
-        <p className="text-xs tracking-widest text-white/70 uppercase">
-          Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
-          <strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
-        </p>
+        {todosPreenchidos ? (
+          <>
+            <span className="text-6xl font-thin tracking-widest">{saida}</span>
+            <p className="text-xs tracking-widest text-white/70 uppercase">
+              Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
+              <strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-white/30 tracking-widest uppercase">Preencha todos os horários</p>
+        )}
       </div>
 
       <ProgressBar entrada={entrada} saida={saida} />
