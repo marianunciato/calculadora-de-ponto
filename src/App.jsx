@@ -7,6 +7,7 @@ import Header from './components/Header'
 import JornadaInput from './components/JornadaInput'
 import TimeInput from './components/TimeInput'
 import Resultado from './components/Resultado'
+import Footer from './components/Footer'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
@@ -43,21 +44,24 @@ export default function App() {
     <div className="min-h-screen bg-[#0d0f1a] text-white flex flex-col">
       <Header />
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="bg-[#161827] rounded-2xl p-6 w-full max-w-2xl flex flex-col gap-4">
+        <div className="bg-[#161827] rounded-3xl p-6 w-full max-w-2xl flex flex-col gap-4">
           <JornadaInput value={jornada} onChange={setJornada} />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
             <TimeInput label="Almoço" icon={<RestaurantIcon fontSize="small" />} value={almoco} onChange={setAlmoco} />
             <TimeInput label="Retorno" icon={<KeyboardReturnIcon fontSize="small" />} value={retorno} onChange={setRetorno} />
           </div>
           <Resultado
             saida={saida}
+            entrada={entrada}
             faltam={faltam}
             alertas={alertas}
             onLimpar={() => { setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 }); ['entrada','almoco','retorno'].forEach(k => localStorage.removeItem(k)) }}
           />
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
+

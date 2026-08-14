@@ -1,20 +1,23 @@
-import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import Delete from '@mui/icons-material/Delete'
 import { ALERTA_STYLES } from '../utils/alertas'
+import ProgressBar from './ProgressBar'
 
-export default function Resultado({ saida, faltam, alertas, onLimpar }) {
+export default function Resultado({ saida, faltam, alertas, onLimpar, entrada }) {
   return (
     <>
       <div className="flex flex-col items-center gap-1 py-2">
         <p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60">Seu horário de saída é</p>
       </div>
 
-      <div className="bg-[#1e2030] rounded-xl p-6 flex flex-col items-center gap-2">
+      <div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2">
         <span className="text-6xl font-thin tracking-widest">{saida}</span>
         <p className="text-xs tracking-widest text-white/70 uppercase">
           Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
           <strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
         </p>
       </div>
+
+      <ProgressBar entrada={entrada} saida={saida} />
 
       {alertas.map((alerta, i) => {
         const { bg, text, Icon } = ALERTA_STYLES[alerta.tipo]
@@ -29,16 +32,16 @@ export default function Resultado({ saida, faltam, alertas, onLimpar }) {
       <div className="flex gap-3">
         <button
           onClick={onLimpar}
-          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase w-full lg:w-1/3"
+          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full lg:w-1/3"
         >
-          <RestartAltIcon fontSize="small" />
+          <Delete fontSize="small" />
           Limpar
         </button>
         <a
           href="https://stou.ifractal.com.br/fulltime//phonto.php"
           target="_blank"
           rel="noreferrer"
-          className="bg-purple-600 hover:bg-purple-700 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1 hidden lg:flex items-center justify-center"
+          className="bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1 hidden lg:flex items-center justify-center"
         >
           Ir para página de ponto
         </a>

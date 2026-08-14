@@ -2,7 +2,7 @@ import WorkHistoryIcon from '@mui/icons-material/WorkHistory'
 
 export default function JornadaInput({ value, onChange }) {
   return (
-    <div className="bg-[#1e2030] rounded-xl p-4 flex items-center justify-between">
+    <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <WorkHistoryIcon className="text-purple-400" />
         <div>
