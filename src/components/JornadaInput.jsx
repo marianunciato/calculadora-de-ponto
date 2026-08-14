@@ -1,8 +1,8 @@
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory'
 
-export default function JornadaInput({ value, onChange }) {
+export default function JornadaInput({ value, onAbrirPrefs }) {
   return (
-    <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between">
+    <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-[#252740] transition-colors" onClick={onAbrirPrefs}>
       <div className="flex items-center gap-3">
         <WorkHistoryIcon className="text-purple-400" />
         <div>
@@ -10,12 +10,7 @@ export default function JornadaInput({ value, onChange }) {
           <p className="text-xs text-white/40">Meta de horas diárias</p>
         </div>
       </div>
-      <input
-        type="time"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="bg-transparent text-white text-2xl font-light outline-none text-right"
-      />
+      <span className="text-2xl font-light text-white">{value || '--:--'}</span>
     </div>
   )
 }

@@ -1,14 +1,29 @@
 import ScheduleIcon from '@mui/icons-material/Schedule'
+import SettingsIcon from '@mui/icons-material/Settings'
 
-export default function Header() {
+export default function Header({ onAbrirPrefs, tab, onTab }) {
   return (
     <header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/10">
       <div className="flex items-center gap-2 text-purple-400 font-bold text-lg">
         <ScheduleIcon fontSize="small" />
         <span className="text-purple-200">Dora</span>
       </div>
-      <span className="hidden sm:block text-md font-bold tracking-[0.3em] text-white/70 uppercase">Calculadora de Ponto</span>
-      <div className="hidden sm:block w-20" />
+      <div className="flex">
+        {['calculadora', 'banco'].map(t => (
+          <button
+            key={t}
+            onClick={() => onTab(t)}
+            className={`px-4 py-1 text-xs font-bold tracking-[0.2em] uppercase transition-colors ${
+              tab === t ? 'text-purple-400' : 'border-transparent text-white/40 hover:text-white/70'
+            }`}
+          >
+            {t === 'calculadora' ? 'Calculadora' : 'Banco de Horas'}
+          </button>
+        ))}
+      </div>
+      <button onClick={onAbrirPrefs} className="text-white/40 hover:text-white transition-colors">
+        <SettingsIcon fontSize="small" />
+      </button>
     </header>
   )
 }

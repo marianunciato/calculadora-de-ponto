@@ -1,8 +1,12 @@
 import Delete from '@mui/icons-material/Delete'
+import SaveIcon from '@mui/icons-material/Save'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { ALERTA_STYLES } from '../utils/alertas'
 import ProgressBar from './ProgressBar'
 
-export default function Resultado({ saida, faltam, alertas, onLimpar, entrada }) {
+export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, saidaReal, onSaidaReal }) {
+  const encerrado = entrada && faltam.horas === 0 && faltam.minutos === 0
+
   return (
     <>
       <div className="flex flex-col items-center gap-1 py-2">
@@ -19,6 +23,24 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, entrada })
 
       <ProgressBar entrada={entrada} saida={saida} />
 
+      {encerrado && (
+        <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ExitToAppIcon className="text-green-400" fontSize="small" />
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase">Saída Real</p>
+              <p className="text-xs text-white/40">Horário que você realmente saiu</p>
+            </div>
+          </div>
+          <input
+            type="time"
+            value={saidaReal}
+            onChange={e => onSaidaReal(e.target.value)}
+            className="bg-transparent text-white text-2xl font-light outline-none text-right"
+          />
+        </div>
+      )}
+
       {alertas.map((alerta, i) => {
         const { bg, text, Icon } = ALERTA_STYLES[alerta.tipo]
         return (
@@ -32,20 +54,28 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, entrada })
       <div className="flex gap-3">
         <button
           onClick={onLimpar}
-          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full lg:w-1/3"
+          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1"
         >
           <Delete fontSize="small" />
           Limpar
         </button>
-        <a
-          href="https://stou.ifractal.com.br/fulltime//phonto.php"
-          target="_blank"
-          rel="noreferrer"
-          className="bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1 hidden lg:flex items-center justify-center"
+        <button
+          onClick={onRegistrar}
+          disabled={!entrada}
+          className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1"
         >
-          Ir para página de ponto
-        </a>
+          <SaveIcon fontSize="small" />
+          Registrar Dia
+        </button>
       </div>
+      <a
+        href="https://stou.ifractal.com.br/fulltime//phonto.php"
+        target="_blank"
+        rel="noreferrer"
+        className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-xs font-bold tracking-[0.25em] uppercase w-full"
+      >
+        Ir para página de ponto
+      </a>
     </>
   )
 }
