@@ -29,7 +29,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar }) {
       <div className="flex gap-3">
         <button
           onClick={onLimpar}
-          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase w-1/3"
+          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase w-full lg:w-1/3"
         >
           <RestartAltIcon fontSize="small" />
           Limpar
@@ -38,7 +38,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar }) {
           href="https://stou.ifractal.com.br/fulltime//phonto.php"
           target="_blank"
           rel="noreferrer"
-          className="bg-purple-600 hover:bg-purple-700 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1 flex items-center justify-center"
+          className="bg-purple-600 hover:bg-purple-700 transition-colors rounded-xl py-4 text-xs font-bold tracking-[0.25em] uppercase flex-1 hidden lg:flex items-center justify-center"
         >
           Ir para página de ponto
         </a>
