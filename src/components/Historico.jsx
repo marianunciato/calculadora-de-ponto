@@ -1,4 +1,9 @@
+import { useState } from 'react'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import EditIcon from '@mui/icons-material/Edit'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
+import { toMinutes } from '../utils/time'
 
 function saldoLabel(mins) {
 	const abs = Math.abs(mins)
@@ -7,7 +12,49 @@ function saldoLabel(mins) {
 	return `${mins >= 0 ? '+' : '-'}${h}:${m}`
 }
 
-export default function Historico({ registros, onLimparHistorico, onExcluirRegistro }) {
+function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
+	const [form, setForm] = useState({
+		data: registro.data,
+		entrada: registro.entrada,
+		almoco: registro.almoco ?? '',
+		retorno: registro.retorno ?? '',
+		saida: registro.saida,
+	})
+	const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
+
+	function confirmar() {
+		const intervaloMins = form.almoco && form.retorno ? Math.max(0, toMinutes(form.retorno) - toMinutes(form.almoco)) : 0
+		const trabalhadoMins = toMinutes(form.saida) - toMinutes(form.entrada) - intervaloMins
+		const jornadaMins = toMinutes(registro.saidaEstimada) - toMinutes(form.entrada) - intervaloMins
+		const extraMins = trabalhadoMins - jornadaMins
+		onConfirmar({ ...registro, ...form, extraMins })
+	}
+
+	return (
+		<div className="bg-[#1e2030] rounded-xl px-4 py-3 flex flex-col gap-3">
+			<div className="flex flex-wrap gap-3 text-xs">
+				{[['Entrada', 'entrada'], ['Almoço', 'almoco'], ['Retorno', 'retorno'], ['Saída', 'saida']].map(([label, key]) => (
+					<label key={key} className="flex flex-col gap-1 text-white/50">
+						{label}
+						<input
+							type="time"
+							value={form[key]}
+							onChange={set(key)}
+							className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-purple-500"
+						/>
+					</label>
+				))}
+			</div>
+			<div className="flex gap-2 justify-end">
+				<button onClick={onCancelar} className="text-white/30 hover:text-white transition-colors"><CloseIcon fontSize="small" /></button>
+				<button onClick={confirmar} className="text-purple-400 hover:text-purple-300 transition-colors"><CheckIcon fontSize="small" /></button>
+			</div>
+		</div>
+	)
+}
+
+export default function Historico({ registros, onLimparHistorico, onExcluirRegistro, onEditarRegistro }) {
+	const [editando, setEditando] = useState(null)
 	const bancoTotal = registros.reduce((acc, r) => acc + r.extraMins, 0)
 
 	return (
@@ -33,6 +80,16 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 				<div className="flex flex-col gap-2">
 					{registros.slice().reverse().map((r, i) => {
 						const idxOriginal = registros.length - 1 - i
+						if (editando === idxOriginal) {
+							return (
+								<EditandoRegistro
+									key={i}
+									registro={r}
+									onConfirmar={(atualizado) => { onEditarRegistro(idxOriginal, atualizado); setEditando(null) }}
+									onCancelar={() => setEditando(null)}
+								/>
+							)
+						}
 						return (
 							<div key={i} className="bg-[#1e2030] rounded-xl px-4 py-3 flex items-center justify-between gap-2">
 								<span className="text-sm text-white/60 w-24 shrink-0">{r.data}</span>
@@ -45,6 +102,13 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 								<span className={`text-sm font-bold shrink-0 ${r.extraMins >= 0 ? 'text-green-400' : 'text-red-400'}`}>
 									{saldoLabel(r.extraMins)}
 								</span>
+								<button
+									onClick={() => setEditando(idxOriginal)}
+									className="text-white/20 hover:text-purple-400 transition-colors shrink-0"
+									title="Editar registro"
+								>
+									<EditIcon fontSize="small" />
+								</button>
 								<button
 									onClick={() => onExcluirRegistro(idxOriginal)}
 									className="text-white/20 hover:text-red-400 transition-colors shrink-0"

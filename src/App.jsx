@@ -37,6 +37,7 @@ export default function App() {
 	})
 	const [saidaReal, setSaidaReal] = useState('')
 	const notificadoRef = useRef(true)
+	const autoRegistradoRef = useRef(false)
 
 	function salvarPrefs(novasPrefs) {
 		setPrefs(novasPrefs)
@@ -60,6 +61,39 @@ export default function App() {
 		setHistorico(atualizado)
 		localStorage.setItem('historico', JSON.stringify(atualizado))
 	}
+
+	function registrarPontoAuto() {
+		if (!entrada || !almoco || !retorno) return
+		const hoje = new Date().toLocaleDateString('pt-BR')
+		const jaRegistrado = historico.some(r => r.data === hoje)
+		if (jaRegistrado || autoRegistradoRef.current) return
+		autoRegistradoRef.current = true
+		const saidaFinal = saidaReal || saida
+		const jornadaMins = toMinutes(jornada)
+		const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
+		const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(entrada) - Math.max(0, intervaloMins)
+		const extraMins = trabalhadoMins - jornadaMins
+		const novo = { data: hoje, entrada, saida: saidaFinal, saidaEstimada: saida, almoco, retorno, extraMins }
+		const atualizado = [...historico, novo]
+		setHistorico(atualizado)
+		localStorage.setItem('historico', JSON.stringify(atualizado))
+	}
+
+	useEffect(() => {
+		if (!entrada || !almoco || !retorno) return
+		if (toMinutes(saida) < toMinutes(entrada)) return
+		const agora = new Date()
+		const meiaNoire = new Date(agora)
+		meiaNoire.setHours(24, 0, 0, 0)
+		const msAteMeiaNoite = meiaNoire - agora
+		const id = setTimeout(() => {
+			registrarPontoAuto()
+			;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
+			setEntrada(''); setAlmoco(''); setRetorno('')
+			autoRegistradoRef.current = false
+		}, msAteMeiaNoite)
+		return () => clearTimeout(id)
+	}, [entrada, almoco, retorno, saida, saidaReal, jornada, historico])
 
 	useEffect(() => {
 		localStorage.setItem('jornada', jornada)
@@ -148,6 +182,14 @@ export default function App() {
 								const atualizado = prev.filter((_, i) => i !== idx)
 								localStorage.setItem('historico', JSON.stringify(atualizado))
 								return atualizado
+							})
+						}}
+						onEditarRegistro={(idx, atualizado) => {
+							setHistorico(prev => {
+								const novo = [...prev]
+								novo[idx] = atualizado
+								localStorage.setItem('historico', JSON.stringify(novo))
+								return novo
 							})
 						}}
 					/>
