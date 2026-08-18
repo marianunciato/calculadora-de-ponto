@@ -98,7 +98,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 					</button>
 					{!encerrado && todosPreenchidos && agoraTooltip && !jaRegistradoHoje && (
 						<div className="absolute tooltip:top-1/2 tooltip:-translate-y-1/2 tooltip:left-[calc(100%+8px)] tooltip:translate-x-0 top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-[#0d0f1a] border border-white/10 text-white/70 text-xs rounded-lg px-3 py-1.5 whitespace-nowrap pointer-events-none z-10">
-							Saída será registrada como <strong className="text-white">{agoraTooltip}</strong>
+							Sua saída será registrada como <strong className="text-white">{agoraTooltip}</strong>
 						</div>
 					)}
 				</div>
