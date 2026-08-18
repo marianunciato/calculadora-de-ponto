@@ -28,7 +28,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
         )}
       </div>
 
-      <ProgressBar entrada={entrada} saida={saida} />
+      <ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} />
 
       {encerrado && (
         <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
