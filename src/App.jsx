@@ -142,6 +142,13 @@ export default function App() {
 					<Historico
 						registros={historico}
 						onLimparHistorico={() => { setHistorico([]); localStorage.removeItem('historico') }}
+						onExcluirRegistro={(idx) => {
+							setHistorico(prev => {
+								const atualizado = prev.filter((_, i) => i !== idx)
+								localStorage.setItem('historico', JSON.stringify(atualizado))
+								return atualizado
+							})
+						}}
 					/>
 				)}
 			</main>
