@@ -26,7 +26,9 @@ function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
 	function confirmar() {
 		const intervaloMins = form.almoco && form.retorno ? Math.max(0, toMinutes(form.retorno) - toMinutes(form.almoco)) : 0
 		const trabalhadoMins = toMinutes(form.saida) - toMinutes(form.entrada) - intervaloMins
-		const jornadaMins = toMinutes(registro.saidaEstimada) - toMinutes(form.entrada) - intervaloMins
+		const jornadaMins = registro.jornada
+			? toMinutes(registro.jornada)
+			: toMinutes(registro.saidaEstimada) - toMinutes(form.entrada) - intervaloMins
 		const extraMins = trabalhadoMins - jornadaMins
 		onConfirmar({ ...registro, ...form, extraMins })
 	}

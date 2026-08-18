@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import Delete from '@mui/icons-material/Delete'
 import SaveIcon from '@mui/icons-material/Save'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import { ALERTA_STYLES } from '../utils/alertas'
 import ProgressBar from './ProgressBar'
 
-export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, almoco, retorno, saidaReal, onSaidaReal, jornada, jaRegistradoHoje }) {
+export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, almoco, retorno, saidaReal, onSaidaReal, jornada, jaRegistradoHoje, tick }) {
 	const todosPreenchidos = entrada && almoco && retorno
 	const encerrado = todosPreenchidos && faltam.horas === 0 && faltam.minutos === 0
 	const [agoraTooltip, setAgoraTooltip] = useState('')
@@ -13,6 +14,8 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 		const agora = new Date()
 		return `${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`
 	})
+	const [toast, setToast] = useState(false)
+	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
 
 	useEffect(() => {
 		function atualizar() {
@@ -27,6 +30,12 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 		if (encerrado || !todosPreenchidos) return
 		const agora = new Date()
 		setAgoraTooltip(`${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`)
+	}
+
+	function handleRegistrar() {
+		onRegistrar()
+		setToast(true)
+		setTimeout(() => setToast(false), 3000)
 	}
 
 	return (
@@ -49,9 +58,9 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				)}
 			</div>
 
-			<ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} jornada={jornada} />
+			<ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} jornada={jornada} tick={tick} />
 
-			{encerrado && (
+			{todosPreenchidos && (
 				<div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
 					<div className="flex items-center gap-3">
 						<ExitToAppIcon className="text-green-400" fontSize="small" />
@@ -79,17 +88,32 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				)
 			})}
 
+			{toast && (
+				<div className="bg-green-500/10 border border-green-500/30 text-green-400 rounded-xl px-4 py-3 flex items-center gap-3 text-xs font-medium">
+					<CheckCircleOutlineIcon fontSize="small" />
+					<span>Dia registrado com sucesso!</span>
+				</div>
+			)}
+
 			<div className="flex gap-3">
-				<button
-					onClick={onLimpar}
-					className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
-				>
-					<Delete fontSize="small" />
-					Limpar
-				</button>
+				{confirmandoLimpar ? (
+					<div className="flex items-center justify-center gap-3 flex-1 border border-white/10 rounded-2xl py-4 text-xs">
+						<span className="text-white/40">Tem certeza?</span>
+						<button onClick={() => { onLimpar(); setConfirmandoLimpar(false) }} className="text-red-400 hover:text-red-300 font-bold transition-colors">Sim</button>
+						<button onClick={() => setConfirmandoLimpar(false)} className="text-white/30 hover:text-white transition-colors">Cancelar</button>
+					</div>
+				) : (
+					<button
+						onClick={() => setConfirmandoLimpar(true)}
+						className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
+					>
+						<Delete fontSize="small" />
+						Limpar
+					</button>
+				)}
 				<div className="relative flex-1" onMouseEnter={handleRegistrarMouseEnter} onMouseLeave={() => setAgoraTooltip('')}>
 					<button
-						onClick={onRegistrar}
+						onClick={handleRegistrar}
 						disabled={!entrada || !almoco || !retorno || jaRegistradoHoje}
 						className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase"
 					>

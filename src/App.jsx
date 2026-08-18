@@ -36,8 +36,25 @@ export default function App() {
 		catch { return [] }
 	})
 	const [saidaReal, setSaidaReal] = useState('')
+	const [tick, setTick] = useState(0)
+
 	const notificadoRef = useRef(true)
 	const autoRegistradoRef = useRef(false)
+	const saidaRealRef = useRef(saidaReal)
+	const saidaRef = useRef(saida)
+	const jornadaRef = useRef(jornada)
+	const entradaRef = useRef(entrada)
+	const almocoRef = useRef(almoco)
+	const retornoRef = useRef(retorno)
+	const historicoRef = useRef(historico)
+
+	useEffect(() => { saidaRealRef.current = saidaReal }, [saidaReal])
+	useEffect(() => { saidaRef.current = saida }, [saida])
+	useEffect(() => { jornadaRef.current = jornada }, [jornada])
+	useEffect(() => { entradaRef.current = entrada }, [entrada])
+	useEffect(() => { almocoRef.current = almoco }, [almoco])
+	useEffect(() => { retornoRef.current = retorno }, [retorno])
+	useEffect(() => { historicoRef.current = historico }, [historico])
 
 	function salvarPrefs(novasPrefs) {
 		setPrefs(novasPrefs)
@@ -56,25 +73,32 @@ export default function App() {
 		const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
 		const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(entrada) - Math.max(0, intervaloMins)
 		const extraMins = trabalhadoMins - jornadaMins
-		const novo = { data: hoje, entrada, saida: saidaFinal, saidaEstimada: saida, almoco, retorno, extraMins }
+		const novo = { data: hoje, entrada, saida: saidaFinal, saidaEstimada: saida, almoco, retorno, extraMins, jornada }
 		const atualizado = [...historico, novo]
 		setHistorico(atualizado)
 		localStorage.setItem('historico', JSON.stringify(atualizado))
 	}
 
 	function registrarPontoAuto() {
-		if (!entrada || !almoco || !retorno) return
+		const _entrada = entradaRef.current
+		const _almoco = almocoRef.current
+		const _retorno = retornoRef.current
+		const _saida = saidaRef.current
+		const _saidaReal = saidaRealRef.current
+		const _jornada = jornadaRef.current
+		const _historico = historicoRef.current
+		if (!_entrada || !_almoco || !_retorno) return
 		const hoje = new Date().toLocaleDateString('pt-BR')
-		const jaRegistrado = historico.some(r => r.data === hoje)
+		const jaRegistrado = _historico.some(r => r.data === hoje)
 		if (jaRegistrado || autoRegistradoRef.current) return
 		autoRegistradoRef.current = true
-		const saidaFinal = saidaReal || saida
-		const jornadaMins = toMinutes(jornada)
-		const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
-		const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(entrada) - Math.max(0, intervaloMins)
+		const saidaFinal = _saidaReal || _saida
+		const jornadaMins = toMinutes(_jornada)
+		const intervaloMins = toMinutes(_retorno) - toMinutes(_almoco)
+		const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(_entrada) - Math.max(0, intervaloMins)
 		const extraMins = trabalhadoMins - jornadaMins
-		const novo = { data: hoje, entrada, saida: saidaFinal, saidaEstimada: saida, almoco, retorno, extraMins }
-		const atualizado = [...historico, novo]
+		const novo = { data: hoje, entrada: _entrada, saida: saidaFinal, saidaEstimada: _saida, almoco: _almoco, retorno: _retorno, extraMins, jornada: _jornada }
+		const atualizado = [..._historico, novo]
 		setHistorico(atualizado)
 		localStorage.setItem('historico', JSON.stringify(atualizado))
 	}
@@ -119,6 +143,7 @@ export default function App() {
 			const diff = saidaMins - agoraMins
 			setFaltam({ horas: Math.max(0, Math.floor(diff / 60)), minutos: Math.max(0, diff % 60) })
 			setAlertas(getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMins))
+			setTick(t => t + 1)
 		}
 		atualizar()
 		const id = setInterval(atualizar, 60000)
@@ -153,30 +178,31 @@ export default function App() {
 					<div className="w-full max-w-2xl flex flex-col gap-4">
 						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
 						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
-						<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
-						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-							<TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
-							<TimeInput label="Almoço" icon={<RestaurantIcon fontSize="small" />} value={almoco} onChange={setAlmoco} />
-							<TimeInput label="Retorno" icon={<KeyboardReturnIcon fontSize="small" />} value={retorno} onChange={setRetorno} />
-						</div>
-						<Resultado
-							saida={saida}
-							entrada={entrada}
-							almoco={almoco}
-							retorno={retorno}
-							saidaReal={saidaReal}
-							onSaidaReal={setSaidaReal}
-							faltam={faltam}
-							alertas={alertas}
-							jornada={jornada}
-							jaRegistradoHoje={historico.some(r => r.data === new Date().toLocaleDateString('pt-BR'))}
-					onRegistrar={() => { registrarPonto(); setTab('banco') }}
-							onLimpar={() => {
-								setSaidaReal('')
-								setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 })
-								;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
-							}}
-						/>
+							<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
+							<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+								<TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
+								<TimeInput label="Almoço" icon={<RestaurantIcon fontSize="small" />} value={almoco} onChange={setAlmoco} />
+								<TimeInput label="Retorno" icon={<KeyboardReturnIcon fontSize="small" />} value={retorno} onChange={setRetorno} />
+							</div>
+							<Resultado
+								saida={saida}
+								entrada={entrada}
+								almoco={almoco}
+								retorno={retorno}
+								saidaReal={saidaReal}
+								onSaidaReal={setSaidaReal}
+								faltam={faltam}
+								alertas={alertas}
+								jornada={jornada}
+								tick={tick}
+								jaRegistradoHoje={historico.some(r => r.data === new Date().toLocaleDateString('pt-BR'))}
+								onRegistrar={() => { registrarPonto(); setTab('banco') }}
+								onLimpar={() => {
+									setSaidaReal('')
+									setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 })
+									;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
+								}}
+							/>
 						</div>
 					</div>
 				) : (

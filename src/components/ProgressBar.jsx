@@ -1,41 +1,36 @@
 import { useEffect, useState } from 'react'
 import { toMinutes } from '../utils/time'
 
-export default function ProgressBar({ entrada, saida, almoco, retorno, jornada }) {
+export default function ProgressBar({ entrada, saida, almoco, retorno, jornada, tick }) {
 	const [progresso, setProgresso] = useState(0)
 
 	useEffect(() => {
-		function calcular() {
-			if (!entrada) return setProgresso(0)
-			const entradaMins = toMinutes(entrada)
-			const almocoMins = toMinutes(almoco)
-			const retornoMins = toMinutes(retorno)
-			const agora = new Date()
-			const agoraMins = agora.getHours() * 60 + agora.getMinutes()
+		if (!entrada) return setProgresso(0)
+		const entradaMins = toMinutes(entrada)
+		const almocoMins = toMinutes(almoco)
+		const retornoMins = toMinutes(retorno)
+		const agora = new Date()
+		const agoraMins = agora.getHours() * 60 + agora.getMinutes()
 
-			let total
-			if (almoco && retorno) {
-				const intervalo = Math.max(0, retornoMins - almocoMins)
-				total = toMinutes(saida) - entradaMins - intervalo
-			} else {
-				total = toMinutes(jornada)
-			}
-			if (total <= 0) return setProgresso(0)
-
-			let trabalhado
-			if (almoco && agoraMins >= almocoMins && (!retorno || agoraMins < retornoMins)) {
-				trabalhado = almocoMins - entradaMins
-			} else if (retorno && agoraMins >= retornoMins) {
-				trabalhado = (almocoMins - entradaMins) + (agoraMins - retornoMins)
-			} else {
-				trabalhado = agoraMins - entradaMins
-			}
-			setProgresso(Math.min(100, Math.max(0, (trabalhado / total) * 100)))
+		let total
+		if (almoco && retorno) {
+			const intervalo = Math.max(0, retornoMins - almocoMins)
+			total = toMinutes(saida) - entradaMins - intervalo
+		} else {
+			total = toMinutes(jornada)
 		}
-		calcular()
-		const id = setInterval(calcular, 60000)
-		return () => clearInterval(id)
-	}, [entrada, saida, almoco, retorno])
+		if (total <= 0) return setProgresso(0)
+
+		let trabalhado
+		if (almoco && agoraMins >= almocoMins && (!retorno || agoraMins < retornoMins)) {
+			trabalhado = almocoMins - entradaMins
+		} else if (retorno && agoraMins >= retornoMins) {
+			trabalhado = (almocoMins - entradaMins) + (agoraMins - retornoMins)
+		} else {
+			trabalhado = agoraMins - entradaMins
+		}
+		setProgresso(Math.min(100, Math.max(0, (trabalhado / total) * 100)))
+	}, [entrada, saida, almoco, retorno, tick])
 
 	const cumprido = Math.round(progresso)
 	const restante = 100 - cumprido

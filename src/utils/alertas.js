@@ -21,6 +21,9 @@ export function getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMi
 	if (retornoMins <= almocoMins)
 		alertas.push({ tipo: 'erro', msg: 'O retorno deve ser após o horário de almoço.' })
 
+	if (retornoMins <= entradaMins)
+		alertas.push({ tipo: 'erro', msg: 'O retorno deve ser após o horário de entrada.' })
+
 	if (intervaloMins > 0 && intervaloMins < 15)
 		alertas.push({ tipo: 'aviso', msg: 'Intervalo muito curto (menos de 15 minutos).' })
 

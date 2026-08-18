@@ -51,13 +51,20 @@ function getMensagemDoDia() {
 
 export default function MensagemDiaria() {
 	const { texto, emoji } = getMensagemDoDia()
-	const [visivel, setVisivel] = React.useState(true)
+	const hoje = new Date().toDateString()
+	const [visivel, setVisivel] = React.useState(() => localStorage.getItem('mensagemFechada') !== hoje)
+
+	function fechar() {
+		localStorage.setItem('mensagemFechada', hoje)
+		setVisivel(false)
+	}
+
 	if (!visivel) return null
 	return (
 		<div className="bg-[#161827] rounded-3xl px-6 py-4 w-full max-w-2xl flex items-center gap-4">
 			<span className="text-2xl">{emoji}</span>
 			<p className="text-sm text-white/60 leading-relaxed flex-1">{texto}</p>
-			<button onClick={() => setVisivel(false)} className="text-white/20 hover:text-white/60 transition-colors shrink-0">✕</button>
+			<button onClick={fechar} className="text-white/20 hover:text-white/60 transition-colors shrink-0">✕</button>
 		</div>
 	)
 }
