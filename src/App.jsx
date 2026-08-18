@@ -14,7 +14,7 @@ import MensagemDiaria from './components/MensagemDiaria'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
-const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false }
+const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro' }
 function loadPrefs() {
 	try { return { ...PREFS_DEFAULT, ...JSON.parse(localStorage.getItem('preferencias')) } }
 	catch { return PREFS_DEFAULT }
@@ -113,11 +113,16 @@ export default function App() {
 		const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
 		const saidaMins = toMinutes(entrada) + jornadaMins + Math.max(0, intervaloMins)
 		setSaida(fromMinutes(saidaMins % (24 * 60)))
-		const agora = new Date()
-		const agoraMins = agora.getHours() * 60 + agora.getMinutes()
-		const diff = saidaMins - agoraMins
-		setFaltam({ horas: Math.max(0, Math.floor(diff / 60)), minutos: Math.max(0, diff % 60) })
-		setAlertas(getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMins))
+		function atualizar() {
+			const agora = new Date()
+			const agoraMins = agora.getHours() * 60 + agora.getMinutes()
+			const diff = saidaMins - agoraMins
+			setFaltam({ horas: Math.max(0, Math.floor(diff / 60)), minutos: Math.max(0, diff % 60) })
+			setAlertas(getAlertas(entrada, almoco, retorno, jornada, saidaMins, agoraMins))
+		}
+		atualizar()
+		const id = setInterval(atualizar, 60000)
+		return () => clearInterval(id)
 	}, [jornada, entrada, almoco, retorno])
 
 	useEffect(() => {
@@ -141,13 +146,13 @@ export default function App() {
 	}, [faltam, prefs.notificarFim, entrada])
 
 	return (
-		<div className="min-h-screen bg-[#0d0f1a] text-white flex flex-col">
+		<div className={`min-h-screen bg-[#0d0f1a] text-white flex flex-col${prefs.tema === 'claro' ? ' light' : ''}`}>
 			<Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} />
 			<main className={`flex-1 flex justify-center p-6 ${tab === 'banco' ? 'items-start' : 'items-center'}`}>
 				{tab === 'calculadora' ? (
 					<div className="w-full max-w-2xl flex flex-col gap-4">
-						<MensagemDiaria />
-						<div className="bg-[#161827] rounded-3xl p-6 flex flex-col gap-4">
+						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
+						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
 						<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />
@@ -164,7 +169,8 @@ export default function App() {
 							faltam={faltam}
 							alertas={alertas}
 							jornada={jornada}
-							onRegistrar={() => { registrarPonto(); setTab('banco') }}
+							jaRegistradoHoje={historico.some(r => r.data === new Date().toLocaleDateString('pt-BR'))}
+					onRegistrar={() => { registrarPonto(); setTab('banco') }}
 							onLimpar={() => {
 								setSaidaReal('')
 								setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 })

@@ -3,6 +3,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
+import DownloadIcon from '@mui/icons-material/Download'
 import { toMinutes } from '../utils/time'
 
 function saldoLabel(mins) {
@@ -55,7 +56,23 @@ function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
 
 export default function Historico({ registros, onLimparHistorico, onExcluirRegistro, onEditarRegistro }) {
 	const [editando, setEditando] = useState(null)
+	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
 	const bancoTotal = registros.reduce((acc, r) => acc + r.extraMins, 0)
+
+	function exportarCSV() {
+		const linhas = [
+			['Data', 'Entrada', 'Almoço', 'Retorno', 'Saída', 'Saldo'],
+			...registros.map(r => [r.data, r.entrada, r.almoco ?? '', r.retorno ?? '', r.saida, saldoLabel(r.extraMins)])
+		]
+		const csv = linhas.map(l => l.join(';')).join('\n')
+		const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+		const url = URL.createObjectURL(blob)
+		const a = document.createElement('a')
+		a.href = url
+		a.download = 'historico-ponto.csv'
+		a.click()
+		URL.revokeObjectURL(url)
+	}
 
 	return (
 		<div className="bg-[#161827] rounded-3xl p-6 w-full max-w-2xl flex flex-col gap-4">
@@ -71,6 +88,12 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 				</div>
 				<div className="text-right">
 					<p className="text-xs text-white/40">{registros.length} dia{registros.length !== 1 ? 's' : ''} registrado{registros.length !== 1 ? 's' : ''}</p>
+					{registros.length > 0 && (
+						<button onClick={exportarCSV} className="mt-2 flex items-center gap-1 text-xs text-white/30 hover:text-purple-400 transition-colors ml-auto">
+							<DownloadIcon fontSize="small" />
+							Exportar CSV
+						</button>
+					)}
 				</div>
 			</div>
 
@@ -123,13 +146,21 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 			)}
 
 			{registros.length > 0 && (
-				<button
-					onClick={onLimparHistorico}
-					className="flex items-center justify-center gap-2 py-3 text-xs text-white/30 hover:text-red-400 transition-colors"
-				>
-					<DeleteOutlineIcon fontSize="small" />
-					Limpar histórico
-				</button>
+				confirmandoLimpar ? (
+					<div className="flex items-center justify-center gap-3 py-3 text-xs">
+						<span className="text-white/40">Tem certeza? Isso não pode ser desfeito.</span>
+						<button onClick={() => { onLimparHistorico(); setConfirmandoLimpar(false) }} className="text-red-400 hover:text-red-300 font-bold transition-colors">Sim, limpar</button>
+						<button onClick={() => setConfirmandoLimpar(false)} className="text-white/30 hover:text-white transition-colors">Cancelar</button>
+					</div>
+				) : (
+					<button
+						onClick={() => setConfirmandoLimpar(true)}
+						className="flex items-center justify-center gap-2 py-3 text-xs text-white/30 hover:text-red-400 transition-colors"
+					>
+						<DeleteOutlineIcon fontSize="small" />
+						Limpar histórico
+					</button>
+				)
 			)}
 		</div>
 	)

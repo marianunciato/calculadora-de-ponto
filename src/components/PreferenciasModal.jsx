@@ -8,7 +8,7 @@ function Toggle({ checked, onChange }) {
 	return (
 		<button
 			onClick={() => onChange(!checked)}
-			className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${checked ? 'bg-purple-500' : 'bg-white/20'}`}
+			className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${checked ? 'bg-purple-500' : 'bg-white/10'}`}
 		>
 			<span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${checked ? 'left-6' : 'left-1'}`} />
 		</button>
@@ -51,6 +51,9 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Geral</p>
 					<Row label="Salvar dados no navegador" desc="Lembra sua jornada diária (localStorage)">
 						<Toggle checked={local.salvarDados} onChange={v => set('salvarDados', v)} />
+					</Row>
+					<Row label="Tema claro" desc="Alterna entre fundo escuro e claro">
+						<Toggle checked={local.tema === 'claro'} onChange={v => set('tema', v ? 'claro' : 'escuro')} />
 					</Row>
 				</div>
 

@@ -10,7 +10,7 @@ export default function JornadaInput({ value, onAbrirPrefs }) {
 					<p className="text-xs text-white/40">Meta de horas diárias</p>
 				</div>
 			</div>
-			<span className="text-2xl font-light text-white">{value || '--:--'}</span>
+			<span className="text-2xl font-light text-white">{ value || '--:--' }</span>
 		</div>
 	)
 }

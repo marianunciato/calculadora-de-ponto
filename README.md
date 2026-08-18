@@ -1,23 +1,47 @@
-# 🕒 Calculadora de Ponto
+# 🕒 Dora — Calculadora de Ponto
 
-Uma aplicação web desenvolvida para facilitar o cálculo e o acompanhamento da sua jornada de trabalho diária de forma intuitiva e eficiente.
+Uma aplicação web para calcular e acompanhar a jornada de trabalho diária de forma intuitiva.
 
 ## 🚀 Tecnologias Utilizadas
 
-Esse projeto foi construído com ferramentas modernas do ecossistema front-end:
-- **[React](https://reactjs.org/)** (com **Vite** para um ambiente de desenvolvimento super rápido)
-- **[Tailwind CSS](https://tailwindcss.com/)** para uma estilização ágil e responsiva
+- **[React 19](https://reactjs.org/)** com **[Vite](https://vitejs.dev/)**
+- **[Tailwind CSS v4](https://tailwindcss.com/)** para estilização
+- **[MUI (Material UI)](https://mui.com/)** para ícones e componentes
 - **JavaScript (ES6+)**
 
 ## ✨ Funcionalidades
 
-A calculadora foi pensada para oferecer uma experiência completa, contando com:
-- **Gestão de Horários:** Inputs dedicados para o registro preciso de entradas e saídas (`TimeInput` e `JornadaInput`).
-- **Acompanhamento Visual:** Uma barra de progresso (`ProgressBar`) para visualizar facilmente o status do seu expediente.
-- **Cálculo Automático:** Apresentação clara do saldo de horas trabalhadas (`Resultado`).
-- **Histórico:** Registro e listagem dos pontos batidos para controle a longo prazo (`Historico`).
-- **Personalização:** Modal de preferências (`PreferenciasModal`) para ajustar a aplicação às regras específicas da sua jornada.
-- **Experiência do Usuário:** Mensagens diárias motivacionais ou informativas (`MensagemDiaria`) e um sistema robusto de alertas (`alertas.js`).
+- **Calculadora de Ponto:** Registro de entrada, almoço e retorno para calcular automaticamente o horário de saída estimado.
+- **Banco de Horas:** Aba dedicada ao histórico de dias registrados, com opções de editar e excluir registros.
+- **Barra de Progresso:** Visualização do andamento da jornada em tempo real (`ProgressBar`).
+- **Saída Real:** Campo para registrar o horário que você realmente saiu, exibido ao concluir a jornada.
+- **Alertas Inteligentes:** Avisos contextuais para erros de horário, intervalo curto, horário de almoço e jornada concluída (`alertas.js`).
+- **Preferências:** Modal de configurações para jornada padrão, tolerância de ponto e notificação de fim de expediente (`PreferenciasModal`).
+- **Notificações do Navegador:** Alerta via Web Notifications API ao zerar o tempo restante.
+- **Registro Automático:** Salva o ponto automaticamente à meia-noite caso não tenha sido registrado manualmente.
+- **Persistência Local:** Dados salvos via `localStorage` (horários do dia, histórico e preferências).
+- **Mensagem Diária:** Mensagem motivacional exibida na tela principal (`MensagemDiaria`).
+
+## 🗂️ Estrutura do Projeto
+
+```
+src/
+├── components/
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   ├── JornadaInput.jsx
+│   ├── TimeInput.jsx
+│   ├── Resultado.jsx
+│   ├── ProgressBar.jsx
+│   ├── Historico.jsx
+│   ├── MensagemDiaria.jsx
+│   └── PreferenciasModal.jsx
+├── utils/
+│   ├── time.js
+│   └── alertas.js
+├── App.jsx
+└── main.jsx
+```
 
 ## 🛠️ Como executar o projeto localmente
 

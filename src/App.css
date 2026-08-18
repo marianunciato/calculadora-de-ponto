@@ -1,1 +1,63 @@
 @import "tailwindcss";
+
+@theme {
+	--breakpoint-tooltip: 1070px;
+}
+
+@keyframes fadeSlideUp {
+	from { opacity: 0; transform: translateY(16px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-card {
+	animation: fadeSlideUp 0.4s ease both;
+}
+
+/* Tema claro */
+.light {
+	--c-bg:     #f0f0f5;
+	--c-card:   #ffffff;
+	--c-card2:  #eeeef6;
+	--c-border: rgba(0,0,0,0.1);
+	--c-text:   #1a1a2e;
+	--c-input:  #e4e4f0;
+}
+
+.light,
+.light .bg-\[\#0d0f1a\] { background-color: var(--c-bg) !important; color: var(--c-text) !important; }
+.light .bg-\[\#161827\]  { background-color: var(--c-card) !important; }
+.light .bg-\[\#1e2030\]  { background-color: var(--c-card2) !important; }
+.light .bg-\[\#252740\]  { background-color: #ddddf0 !important; }
+.light .bg-white\/10     { background-color: rgba(0,0,0,0.08) !important; }
+
+.light .border-white\/10,
+.light .border-t,
+.light .border-b { border-color: var(--c-border) !important; }
+
+.light .text-white        { color: var(--c-text) !important; }
+.light .bg-purple-600 .text-white,
+.light .bg-purple-500 .text-white,
+.light .bg-purple-600,
+.light .bg-purple-500     { color: #ffffff !important; }
+.light .text-white\/70    { color: rgba(26,26,46,0.7) !important; }
+.light .text-white\/60    { color: rgba(26,26,46,0.6) !important; }
+.light .text-white\/50    { color: rgba(26,26,46,0.5) !important; }
+.light .text-white\/40    { color: rgba(26,26,46,0.4) !important; }
+.light .text-white\/30    { color: rgba(26,26,46,0.3) !important; }
+.light .text-white\/20    { color: rgba(26,26,46,0.15) !important; }
+.light .text-purple-200   { color: #6d28d9 !important; }
+
+/* inputs */
+.light input[type="time"]   { color-scheme: light; color: var(--c-text) !important; }
+.light input[type="number"],
+.light select {
+	background-color: var(--c-input) !important;
+	color: var(--c-text) !important;
+	border-color: var(--c-border) !important;
+}
+
+/* tooltip */
+.light .bg-\[\#0d0f1a\].border { background-color: var(--c-card) !important; }
+
+/* botão limpar */
+.light .border-white\/10.hover\:border-white\/30 { border-color: rgba(0,0,0,0.2) !important; }
