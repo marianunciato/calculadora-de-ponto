@@ -129,6 +129,7 @@ export default function App() {
 							onSaidaReal={setSaidaReal}
 							faltam={faltam}
 							alertas={alertas}
+							jornada={jornada}
 							onRegistrar={() => { registrarPonto(); setTab('banco') }}
 							onLimpar={() => {
 								setSaidaReal('')

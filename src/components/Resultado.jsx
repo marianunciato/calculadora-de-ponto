@@ -4,85 +4,85 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { ALERTA_STYLES } from '../utils/alertas'
 import ProgressBar from './ProgressBar'
 
-export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, almoco, retorno, saidaReal, onSaidaReal }) {
-  const todosPreenchidos = entrada && almoco && retorno
-  const encerrado = todosPreenchidos && faltam.horas === 0 && faltam.minutos === 0
+export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistrar, entrada, almoco, retorno, saidaReal, onSaidaReal, jornada }) {
+	const todosPreenchidos = entrada && almoco && retorno
+	const encerrado = todosPreenchidos && faltam.horas === 0 && faltam.minutos === 0
 
-  return (
-    <>
-      <div className="flex flex-col items-center gap-1 py-2">
-        <p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60">Seu horário de saída é</p>
-      </div>
+	return (
+		<>
+			<div className="flex flex-col items-center gap-1 py-2">
+				<p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60">Seu horário de saída é</p>
+			</div>
 
-      <div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2">
-        {todosPreenchidos ? (
-          <>
-            <span className="text-6xl font-thin tracking-widest">{saida}</span>
-            <p className="text-xs tracking-widest text-white/70 uppercase">
-              Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
-              <strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
-            </p>
-          </>
-        ) : (
-          <p className="text-sm text-white/30 tracking-widest uppercase">Preencha todos os horários</p>
-        )}
-      </div>
+			<div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2">
+				{todosPreenchidos ? (
+					<>
+						<span className="text-6xl font-thin tracking-widest">{saida}</span>
+						<p className="text-xs tracking-widest text-white/70 uppercase">
+							Faltam <strong className="text-white">{faltam.horas} horas</strong> e{' '}
+							<strong className="text-white">{faltam.minutos} minutos</strong> para a sua saída
+						</p>
+					</>
+				) : (
+					<p className="text-sm text-white/30 tracking-widest uppercase">Preencha todos os horários</p>
+				)}
+			</div>
 
-      <ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} />
+			<ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} jornada={jornada} />
 
-      {encerrado && (
-        <div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <ExitToAppIcon className="text-green-400" fontSize="small" />
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase">Saída Real</p>
-              <p className="text-xs text-white/40">Horário que você realmente saiu</p>
-            </div>
-          </div>
-          <input
-            type="time"
-            value={saidaReal}
-            onChange={e => onSaidaReal(e.target.value)}
-            className="bg-transparent text-white text-2xl font-light outline-none text-right"
-          />
-        </div>
-      )}
+			{encerrado && (
+				<div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
+					<div className="flex items-center gap-3">
+						<ExitToAppIcon className="text-green-400" fontSize="small" />
+						<div>
+							<p className="text-xs font-bold tracking-widest uppercase">Saída Real</p>
+							<p className="text-xs text-white/40">Horário que você realmente saiu</p>
+						</div>
+					</div>
+					<input
+						type="time"
+						value={saidaReal}
+						onChange={e => onSaidaReal(e.target.value)}
+						className="bg-transparent text-white text-2xl font-light outline-none text-right"
+					/>
+				</div>
+			)}
 
-      {alertas.map((alerta, i) => {
-        const { bg, text, Icon } = ALERTA_STYLES[alerta.tipo]
-        return (
-          <div key={i} className={`${bg} ${text} rounded-xl px-4 py-3 flex items-center gap-3 text-xs font-medium`}>
-            <Icon fontSize="small" />
-            <span>{alerta.msg}</span>
-          </div>
-        )
-      })}
+			{alertas.map((alerta, i) => {
+				const { bg, text, Icon } = ALERTA_STYLES[alerta.tipo]
+				return (
+					<div key={i} className={`${bg} ${text} rounded-xl px-4 py-3 flex items-center gap-3 text-xs font-medium`}>
+						<Icon fontSize="small" />
+						<span>{alerta.msg}</span>
+					</div>
+				)
+			})}
 
-      <div className="flex gap-3">
-        <button
-          onClick={onLimpar}
-          className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
-        >
-          <Delete fontSize="small" />
-          Limpar
-        </button>
-        <button
-          onClick={onRegistrar}
-          disabled={!entrada || !almoco || !retorno}
-          className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
-        >
-          <SaveIcon fontSize="small" />
-          Registrar Dia
-        </button>
-      </div>
-      <a
-        href="https://stou.ifractal.com.br/fulltime//phonto.php"
-        target="_blank"
-        rel="noreferrer"
-        className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
-      >
-        Ir para página de ponto
-      </a>
-    </>
-  )
+			<div className="flex gap-3">
+				<button
+					onClick={onLimpar}
+					className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
+				>
+					<Delete fontSize="small" />
+					Limpar
+				</button>
+				<button
+					onClick={onRegistrar}
+					disabled={!entrada || !almoco || !retorno}
+					className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
+				>
+					<SaveIcon fontSize="small" />
+					Registrar Dia
+				</button>
+			</div>
+			<a
+				href="https://stou.ifractal.com.br/fulltime//phonto.php"
+				target="_blank"
+				rel="noreferrer"
+				className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
+			>
+				Ir para página de ponto
+			</a>
+		</>
+	)
 }
