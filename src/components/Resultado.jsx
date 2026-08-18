@@ -105,7 +105,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 			</div>
 			{!encerrado && todosPreenchidos && !jaRegistradoHoje && (
 				<p className="md:hidden text-center text-xs text-white/40">
-					Saída será registrada como <strong className="text-white/70">{agoraMobile}</strong>
+					Sua saída será registrada como <strong className="text-white/70">{agoraMobile}</strong>
 				</p>
 			)}
 			<a
