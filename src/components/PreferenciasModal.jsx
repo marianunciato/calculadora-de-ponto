@@ -2,7 +2,7 @@ import { useState } from 'react'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CloseIcon from '@mui/icons-material/Close'
 
-const JORNADAS = ['04:00', '06:00', '07:12', '08:00', '08:48', '09:00', '10:00']
+const JORNADAS = ['04:00', '06:00', '08:00', '08:48', '12:00']
 
 function Toggle({ checked, onChange }) {
 	return (
