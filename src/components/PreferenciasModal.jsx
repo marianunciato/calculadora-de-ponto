@@ -11,6 +11,7 @@ const CORES = [
 	{ id: 'amarelo',  bg: '#d97706' },
 	{ id: 'vermelho', bg: '#dc2626' },
 	{ id: 'rosa',     bg: '#db2777' },
+	{ id: 'contrast', bg: 'conic-gradient(#ffffff 180deg, #000000 180deg)' },
 ]
 
 function Toggle({ checked, onChange }) {
@@ -19,7 +20,7 @@ function Toggle({ checked, onChange }) {
 			onClick={() => onChange(!checked)}
 			className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${checked ? 'accent-bg' : 'bg-white/10'}`}
 		>
-			<span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${checked ? 'left-6' : 'left-1'}`} />
+			<span className={`absolute top-1 w-4 h-4 rounded-full transition-all duration-300 ${checked ? 'left-6' : 'left-1'}`} style={{ backgroundColor: checked ? 'var(--accent-text-color, #ffffff)' : '#ffffff' }} />
 		</button>
 	)
 }
@@ -75,7 +76,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 								key={id}
 								onClick={() => set('cor', id)}
 								title={id.charAt(0).toUpperCase() + id.slice(1)}
-								style={{ backgroundColor: bg }}
+								style={{ background: bg }}
 								className={`w-6 h-6 rounded-full transition-transform hover:scale-105 ${
 									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#535353] scale-105' : ''
 								}`}
