@@ -17,10 +17,13 @@ Uma aplicação web para calcular e acompanhar a jornada de trabalho diária de 
 - **Saída Real:** Campo para registrar o horário que você realmente saiu, exibido ao concluir a jornada.
 - **Alertas Inteligentes:** Avisos contextuais para erros de horário, intervalo curto, horário de almoço e jornada concluída (`alertas.js`).
 - **Preferências:** Modal de configurações para jornada padrão, tolerância de ponto e notificação de fim de expediente (`PreferenciasModal`).
+- **Paletas de Cores:** 6 opções de cor de acento (roxo, azul, rosa, amarelo, vermelho e verde), cada uma com versão escura e clara. O fundo e os cards acompanham sutilmente a cor escolhida.
 - **Notificações do Navegador:** Alerta via Web Notifications API ao zerar o tempo restante.
-- **Registro Automático:** Salva o ponto automaticamente à meia-noite caso não tenha sido registrado manualmente.
+- **Registro Automático:** Salva o ponto automaticamente à meia-noite caso não tenha sido registrado manualmente, limpando os campos em seguida.
+- **Limpeza ao Registrar:** Campos limpos automaticamente ao registrar o dia manualmente, com confirmação antes da ação.
 - **Persistência Local:** Dados salvos via `localStorage` (horários do dia, histórico e preferências).
 - **Mensagem Diária:** Mensagem motivacional exibida na tela principal (`MensagemDiaria`).
+- **Card de Novidades:** Notificação dispensável no canto inferior direito para anunciar atualizações aos usuários (`CardNovidade`).
 
 ## 🗂️ Estrutura do Projeto
 
@@ -35,7 +38,8 @@ src/
 │   ├── ProgressBar.jsx
 │   ├── Historico.jsx
 │   ├── MensagemDiaria.jsx
-│   └── PreferenciasModal.jsx
+│   ├── PreferenciasModal.jsx
+│   └── CardNovidade.jsx
 ├── utils/
 │   ├── time.js
 │   └── alertas.js
@@ -63,6 +67,6 @@ src/
    ```
 5. Abra o navegador no link informado no terminal (geralmente `http://localhost:5173`).
 
-## 👩‍💻 Autora
+## 👩💻 Autora
 
 Desenvolvido com 💜 por **Maria Eduarda Anunciato**.
