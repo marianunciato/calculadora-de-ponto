@@ -11,10 +11,11 @@ import Footer from './components/Footer'
 import PreferenciasModal from './components/PreferenciasModal'
 import Historico from './components/Historico'
 import MensagemDiaria from './components/MensagemDiaria'
+import CardNovidade from './components/CardNovidade'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
-const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro' }
+const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro', cor: 'roxo' }
 function loadPrefs() {
 	try { return { ...PREFS_DEFAULT, ...JSON.parse(localStorage.getItem('preferencias')) } }
 	catch { return PREFS_DEFAULT }
@@ -117,7 +118,7 @@ export default function App() {
 			autoRegistradoRef.current = false
 		}, msAteMeiaNoite)
 		return () => clearTimeout(id)
-	}, [entrada, almoco, retorno, saida, saidaReal, jornada, historico])
+	}, [entrada, almoco, retorno])
 
 	useEffect(() => {
 		localStorage.setItem('jornada', jornada)
@@ -171,7 +172,7 @@ export default function App() {
 	}, [faltam, prefs.notificarFim, entrada])
 
 	return (
-		<div className={`min-h-screen bg-[#0d0f1a] text-white flex flex-col${prefs.tema === 'claro' ? ' light' : ''}`}>
+		<div data-cor={prefs.cor} style={{ backgroundColor: prefs.tema === 'claro' ? 'var(--c-bg-light, #f0f0f5)' : 'var(--c-bg, #0d0f1a)' }} className={`min-h-screen text-white flex flex-col${prefs.tema === 'claro' ? ' light' : ''}`}>
 			<Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} />
 			<main className={`flex-1 flex justify-center p-6 ${tab === 'banco' ? 'items-start' : 'items-center'}`}>
 				{tab === 'calculadora' ? (
@@ -196,7 +197,12 @@ export default function App() {
 								jornada={jornada}
 								tick={tick}
 								jaRegistradoHoje={historico.some(r => r.data === new Date().toLocaleDateString('pt-BR'))}
-								onRegistrar={() => { registrarPonto(); setTab('banco') }}
+								onRegistrar={() => {
+									registrarPonto()
+									setSaidaReal(''); setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 })
+									;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
+									setTab('banco')
+								}}
 								onLimpar={() => {
 									setSaidaReal('')
 									setEntrada(''); setAlmoco(''); setRetorno(''); setSaida('00:00'); setFaltam({ horas: 0, minutos: 0 })
@@ -228,6 +234,7 @@ export default function App() {
 				)}
 			</main>
 			<Footer />
+			<CardNovidade />
 			{modalAberta && <PreferenciasModal prefs={prefs} onSalvar={salvarPrefs} onFechar={() => setModalAberta(false)} />}
 		</div>
 	)

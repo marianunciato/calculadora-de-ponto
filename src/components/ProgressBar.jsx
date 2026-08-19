@@ -43,7 +43,7 @@ export default function ProgressBar({ entrada, saida, almoco, retorno, jornada, 
 			</div>
 			<div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
 				<div
-					className="h-full bg-purple-500 rounded-full transition-all duration-700"
+					className="h-full accent-bg-light rounded-full transition-all duration-700"
 					style={{ width: `${cumprido}%` }}
 				/>
 			</div>

@@ -4,9 +4,9 @@ import SettingsIcon from '@mui/icons-material/Settings'
 export default function Header({ onAbrirPrefs, tab, onTab }) {
 	return (
 		<header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/10">
-			<div className="flex items-center gap-2 text-purple-400 font-bold text-lg">
+			<div className="flex items-center gap-2 accent-text font-bold text-lg">
 				<ScheduleIcon fontSize="small" />
-				<span className="text-purple-200">Dora</span>
+				<span className="accent-text">Dora</span>
 			</div>
 			<div className="flex">
 				{['calculadora', 'banco'].map(t => (
@@ -14,7 +14,7 @@ export default function Header({ onAbrirPrefs, tab, onTab }) {
 						key={t}
 						onClick={() => onTab(t)}
 						className={`px-4 py-1 text-xs font-bold tracking-[0.2em] uppercase transition-colors ${
-							tab === t ? 'text-purple-400' : 'border-transparent text-white/40 hover:text-white/70'
+							tab === t ? 'accent-text' : 'border-transparent text-white/40 hover:text-white/70'
 						}`}
 					>
 						{t === 'calculadora' ? 'Calculadora' : 'Banco de Horas'}

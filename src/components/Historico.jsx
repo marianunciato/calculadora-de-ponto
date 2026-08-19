@@ -43,14 +43,14 @@ function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
 							type="time"
 							value={form[key]}
 							onChange={set(key)}
-							className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-purple-500"
+							className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-[var(--accent)]"
 						/>
 					</label>
 				))}
 			</div>
 			<div className="flex gap-2 justify-end">
 				<button onClick={onCancelar} className="text-white/30 hover:text-white transition-colors"><CloseIcon fontSize="small" /></button>
-				<button onClick={confirmar} className="text-purple-400 hover:text-purple-300 transition-colors"><CheckIcon fontSize="small" /></button>
+				<button onClick={confirmar} className="accent-text hover:text-[var(--accent-light)] transition-colors"><CheckIcon fontSize="small" /></button>
 			</div>
 		</div>
 	)
@@ -91,7 +91,7 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 				<div className="text-right">
 					<p className="text-xs text-white/40">{registros.length} dia{registros.length !== 1 ? 's' : ''} registrado{registros.length !== 1 ? 's' : ''}</p>
 					{registros.length > 0 && (
-						<button onClick={exportarCSV} className="mt-2 flex items-center gap-1 text-xs text-white/30 hover:text-purple-400 transition-colors ml-auto">
+						<button onClick={exportarCSV} className="mt-2 flex items-center gap-1 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors ml-auto">
 							<DownloadIcon fontSize="small" />
 							Exportar CSV
 						</button>
@@ -129,7 +129,7 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 								</span>
 								<button
 									onClick={() => setEditando(idxOriginal)}
-									className="text-white/20 hover:text-purple-400 transition-colors shrink-0"
+									className="text-white/20 hover:text-[var(--accent-light)] transition-colors shrink-0"
 									title="Editar registro"
 								>
 									<EditIcon fontSize="small" />

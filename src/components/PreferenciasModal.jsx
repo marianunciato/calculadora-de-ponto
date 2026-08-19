@@ -4,11 +4,20 @@ import CloseIcon from '@mui/icons-material/Close'
 
 const JORNADAS = ['04:00', '06:00', '08:00', '08:48', '12:00']
 
+const CORES = [
+	{ id: 'roxo',     bg: '#9333ea' },
+	{ id: 'azul',     bg: '#2563eb' },
+	{ id: 'rosa',     bg: '#db2777' },
+	{ id: 'amarelo',  bg: '#d97706' },
+	{ id: 'vermelho', bg: '#dc2626' },
+	{ id: 'verde',    bg: '#16a34a' },
+]
+
 function Toggle({ checked, onChange }) {
 	return (
 		<button
 			onClick={() => onChange(!checked)}
-			className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${checked ? 'bg-purple-500' : 'bg-white/10'}`}
+			className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${checked ? 'accent-bg' : 'bg-white/10'}`}
 		>
 			<span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${checked ? 'left-6' : 'left-1'}`} />
 		</button>
@@ -37,7 +46,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 
 				{/* Header */}
 				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-2 text-purple-400 font-bold text-lg">
+					<div className="flex items-center gap-2 accent-text font-bold text-lg">
 						<SettingsIcon fontSize="small" />
 						<span className="text-white">Preferências</span>
 					</div>
@@ -52,6 +61,24 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					<Row label="Salvar dados no navegador" desc="Lembra sua jornada diária (localStorage)">
 						<Toggle checked={local.salvarDados} onChange={v => set('salvarDados', v)} />
 					</Row>
+				</div>
+
+				{/* Cor de acento */}
+				<div className="flex flex-col gap-3">
+					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Tema</p>
+					<div className="flex gap-3 flex-wrap">
+						{CORES.map(({ id, bg }) => (
+							<button
+								key={id}
+								onClick={() => set('cor', id)}
+								title={id.charAt(0).toUpperCase() + id.slice(1)}
+								style={{ backgroundColor: bg }}
+								className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${
+									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#161827] scale-110' : ''
+								}`}
+							/>
+						))}
+					</div>					
 					<Row label="Tema claro" desc="Alterna entre fundo escuro e claro">
 						<Toggle checked={local.tema === 'claro'} onChange={v => set('tema', v ? 'claro' : 'escuro')} />
 					</Row>
@@ -102,7 +129,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					</button>
 					<button
 						onClick={() => onSalvar(local)}
-						className="flex-1 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-sm font-bold tracking-widest uppercase transition-colors"
+						className="flex-1 py-3 rounded-xl accent-bg accent-bg-hover text-white text-sm font-bold tracking-widest uppercase transition-colors"
 					>
 						Salvar Alterações
 					</button>

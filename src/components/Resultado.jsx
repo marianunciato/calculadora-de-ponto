@@ -16,6 +16,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 	})
 	const [toast, setToast] = useState(false)
 	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
+	const [confirmandoRegistrar, setConfirmandoRegistrar] = useState(false)
 
 	useEffect(() => {
 		function atualizar() {
@@ -111,21 +112,29 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 						Limpar
 					</button>
 				)}
-				<div className="relative flex-1" onMouseEnter={handleRegistrarMouseEnter} onMouseLeave={() => setAgoraTooltip('')}>
-					<button
-						onClick={handleRegistrar}
-						disabled={!entrada || !almoco || !retorno || jaRegistradoHoje}
-						className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase"
-					>
-						<SaveIcon fontSize="small" />
-						{jaRegistradoHoje ? 'Já Registrado' : 'Registrar Dia'}
-					</button>
-					{!encerrado && todosPreenchidos && agoraTooltip && !jaRegistradoHoje && (
-						<div className="absolute tooltip:top-1/2 tooltip:-translate-y-1/2 tooltip:left-[calc(100%+8px)] tooltip:translate-x-0 top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-[#0d0f1a] border border-white/10 text-white/70 text-xs rounded-lg px-3 py-1.5 whitespace-nowrap pointer-events-none z-10">
-							Sua saída será registrada como <strong className="text-white">{agoraTooltip}</strong>
-						</div>
-					)}
-				</div>
+				{confirmandoRegistrar ? (
+					<div className="flex items-center justify-center gap-3 flex-1 border border-white/10 rounded-2xl py-4 text-xs">
+						<span className="text-white/40">Isso limpará os campos.</span>
+						<button onClick={() => { handleRegistrar(); setConfirmandoRegistrar(false) }} className="text-[var(--accent)] hover:text-[var(--accent-light)] font-bold transition-colors">Confirmar</button>
+						<button onClick={() => setConfirmandoRegistrar(false)} className="text-white/30 hover:text-white transition-colors">Cancelar</button>
+					</div>
+				) : (
+					<div className="relative flex-1" onMouseEnter={handleRegistrarMouseEnter} onMouseLeave={() => setAgoraTooltip('')}>
+						<button
+							onClick={() => setConfirmandoRegistrar(true)}
+							disabled={!entrada || !almoco || !retorno || jaRegistradoHoje}
+							className="w-full flex items-center justify-center gap-2 accent-bg accent-bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase"
+						>
+							<SaveIcon fontSize="small" />
+							{jaRegistradoHoje ? 'Já Registrado' : 'Registrar Dia'}
+						</button>
+						{!encerrado && todosPreenchidos && agoraTooltip && !jaRegistradoHoje && (
+							<div className="absolute tooltip:top-1/2 tooltip:-translate-y-1/2 tooltip:left-[calc(100%+8px)] tooltip:translate-x-0 top-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-[#0d0f1a] border border-white/10 text-white/70 text-xs rounded-lg px-3 py-1.5 whitespace-nowrap pointer-events-none z-10">
+								Sua saída será registrada como <strong className="text-white">{agoraTooltip}</strong>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 			{!encerrado && todosPreenchidos && !jaRegistradoHoje && (
 				<p className="md:hidden text-center text-xs text-white/40">
@@ -136,7 +145,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				href="https://stou.ifractal.com.br/fulltime//phonto.php"
 				target="_blank"
 				rel="noreferrer"
-				className="hidden lg:flex items-center justify-center bg-purple-600 hover:bg-purple-700 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
+				className="hidden lg:flex items-center justify-center accent-bg accent-bg-hover transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
 			>
 				Ir para página de ponto
 			</a>
