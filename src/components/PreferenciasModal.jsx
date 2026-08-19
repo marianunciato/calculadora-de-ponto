@@ -77,8 +77,8 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 								onClick={() => set('cor', id)}
 								title={id.charAt(0).toUpperCase() + id.slice(1)}
 								style={{ background: bg }}
-								className={`w-6 h-6 rounded-full transition-transform hover:scale-105 ${
-									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#535353] scale-105' : ''
+								className={`w-6 h-6 rounded-full transition-transform hover:scale-110 ${
+									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#535353] scale-110' : ''
 								}`}
 							/>
 						))}
