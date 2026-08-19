@@ -7,10 +7,10 @@ const JORNADAS = ['04:00', '06:00', '08:00', '08:48', '12:00']
 const CORES = [
 	{ id: 'roxo',     bg: '#9333ea' },
 	{ id: 'azul',     bg: '#2563eb' },
-	{ id: 'rosa',     bg: '#db2777' },
+	{ id: 'verde',    bg: '#16a34a' },
 	{ id: 'amarelo',  bg: '#d97706' },
 	{ id: 'vermelho', bg: '#dc2626' },
-	{ id: 'verde',    bg: '#16a34a' },
+	{ id: 'rosa',     bg: '#db2777' },
 ]
 
 function Toggle({ checked, onChange }) {
@@ -64,24 +64,24 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 				</div>
 
 				{/* Cor de acento */}
-				<div className="flex flex-col gap-3">
-					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Tema</p>
-					<div className="flex gap-3 flex-wrap">
+				<div className="flex flex-col gap-4">
+					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Tema</p>				
+					<Row label="Tema claro" desc="Alterna entre fundo escuro e claro">
+						<Toggle checked={local.tema === 'claro'} onChange={v => set('tema', v ? 'claro' : 'escuro')} />
+					</Row>
+					<div className="flex gap-4 flex-wrap justify-center">
 						{CORES.map(({ id, bg }) => (
 							<button
 								key={id}
 								onClick={() => set('cor', id)}
 								title={id.charAt(0).toUpperCase() + id.slice(1)}
 								style={{ backgroundColor: bg }}
-								className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${
-									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#161827] scale-110' : ''
+								className={`w-6 h-6 rounded-full transition-transform hover:scale-105 ${
+									local.cor === id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#535353] scale-105' : ''
 								}`}
 							/>
 						))}
-					</div>					
-					<Row label="Tema claro" desc="Alterna entre fundo escuro e claro">
-						<Toggle checked={local.tema === 'claro'} onChange={v => set('tema', v ? 'claro' : 'escuro')} />
-					</Row>
+					</div>	
 				</div>
 
 				{/* Cálculo de Ponto */}
@@ -120,7 +120,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 				</div>
 
 				{/* Ações */}
-				<div className="flex gap-3 pt-2 border-t border-white/10">
+				<div className="flex gap-3">
 					<button
 						onClick={onFechar}
 						className="flex-1 py-3 rounded-xl border border-white/10 hover:border-white/30 text-sm font-bold tracking-widest uppercase transition-colors"
