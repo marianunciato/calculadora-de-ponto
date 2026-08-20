@@ -14,6 +14,8 @@ function saldoLabel(mins) {
 	return `${mins >= 0 ? '+' : '-'}${h}:${m}`
 }
 
+const inputCls = "w-full max-w-[7rem] bg-[#0d0f1a] text-white text-xs rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-[var(--accent)]"
+
 function FormRegistro({ registro, jornadaPadrao, onConfirmar, onCancelar }) {
 	const [form, setForm] = useState({
 		data: registro?.data ?? '',
@@ -36,37 +38,26 @@ function FormRegistro({ registro, jornadaPadrao, onConfirmar, onCancelar }) {
 	const dataISO = form.data ? form.data.split('/').reverse().join('-') : ''
 
 	return (
-		<div className="bg-[#1e2030] rounded-xl px-4 py-3 flex flex-col gap-3">
-			<div className="flex flex-wrap gap-3 text-xs">
-				<label className="flex flex-col gap-1 text-white/50">
-					Data
-					<input
-						type="date"
-						value={dataISO}
-						onChange={e => {
-							const [y, m, d] = e.target.value.split('-')
-							setForm(f => ({ ...f, data: `${d}/${m}/${y}` }))
-						}}
-						className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-[var(--accent)]"
-					/>
-				</label>
-				{[['Entrada', 'entrada'], ['Almoço', 'almoco'], ['Retorno', 'retorno'], ['Saída', 'saida']].map(([label, key]) => (
-					<label key={key} className="flex flex-col gap-1 text-white/50">
-						{label}
-						<input
-							type="time"
-							value={form[key]}
-							onChange={set(key)}
-							className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-[var(--accent)]"
-						/>
-					</label>
-				))}
-			</div>
-			<div className="flex gap-2 justify-end">
-				<button onClick={onCancelar} className="text-white/30 hover:text-white transition-colors"><CloseIcon fontSize="small" /></button>
-				<button onClick={confirmar} className="accent-text hover:text-[var(--accent-light)] transition-colors"><CheckIcon fontSize="small" /></button>
-			</div>
-		</div>
+		<tr className="bg-[#1e2030] text-center">
+			<td className="px-3 py-2 rounded-l-xl">
+				<input type="date" value={dataISO} onChange={e => {
+					const [y, m, d] = e.target.value.split('-')
+					setForm(f => ({ ...f, data: `${d}/${m}/${y}` }))
+				}} className={inputCls} />
+			</td>
+			{[['entrada', 'time'], ['almoco', 'time'], ['retorno', 'time'], ['saida', 'time']].map(([key, type]) => (
+				<td key={key} className="px-3 py-2">
+					<input type={type} value={form[key]} onChange={set(key)} className={inputCls} />
+				</td>
+			))}
+			<td className="px-3 py-2" />
+			<td className="px-3 py-2 rounded-r-xl">
+				<div className="flex gap-2 justify-end">
+					<button onClick={onCancelar} className="text-white/30 hover:text-white transition-colors"><CloseIcon fontSize="small" /></button>
+					<button onClick={confirmar} className="accent-text hover:text-[var(--accent-light)] transition-colors"><CheckIcon fontSize="small" /></button>
+				</div>
+			</td>
+		</tr>
 	)
 }
 
@@ -96,7 +87,7 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 	}
 
 	return (
-		<div className="bg-[#161827] rounded-3xl p-6 w-full max-w-2xl flex flex-col gap-4">
+		<div className="bg-[#161827] rounded-3xl p-6 w-full max-w-4xl flex flex-col gap-4">
 
 			<div className="bg-[#1e2030] rounded-2xl p-6 flex items-center justify-between">
 				<div>
@@ -126,61 +117,77 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 				</button>
 			</div>
 
-			{adicionando && (
-				<FormRegistro
-					registro={null}
-					jornadaPadrao={jornadaPadrao}
-					onConfirmar={(novo) => { onAdicionarRegistro(novo); setAdicionando(false) }}
-					onCancelar={() => setAdicionando(false)}
-				/>
-			)}
-
 			{registros.length === 0 && !adicionando ? (
 				<p className="text-center text-white/30 text-sm py-8">Nenhum registro ainda.<br />Use o botão "Registrar Dia" na calculadora.</p>
 			) : (
-				<div className="flex flex-col gap-2">
-					{registrosOrdenados.map((r, i) => {
-						const idxOriginal = registros.indexOf(r)
-						if (editando === idxOriginal) {
-							return (
+				<div className="overflow-x-auto">
+					<table className="w-full text-xs text-white/70 border-separate border-spacing-y-1">
+						<thead>
+							<tr className="text-white/30 uppercase tracking-widest text-center">
+								<th className="px-3 py-2 font-medium">Data</th>
+								<th className="px-3 py-2 font-medium">Entrada</th>
+								<th className="px-3 py-2 font-medium">Almoço</th>
+								<th className="px-3 py-2 font-medium">Retorno</th>
+								<th className="px-3 py-2 font-medium">Saída</th>
+								<th className="px-3 py-2 font-medium">Saldo</th>
+								<th />
+							</tr>
+						</thead>
+						<tbody>
+							{adicionando && (
 								<FormRegistro
-									key={i}
-									registro={r}
+									registro={null}
 									jornadaPadrao={jornadaPadrao}
-									onConfirmar={(atualizado) => { onEditarRegistro(idxOriginal, atualizado); setEditando(null) }}
-									onCancelar={() => setEditando(null)}
+									onConfirmar={(novo) => { onAdicionarRegistro(novo); setAdicionando(false) }}
+									onCancelar={() => setAdicionando(false)}
 								/>
-							)
-						}
-						return (
-							<div key={i} className="bg-[#1e2030] rounded-xl px-4 py-3 flex items-center justify-between gap-2">
-								<span className="text-sm text-white/60 w-24 shrink-0">{r.data}</span>
-								<div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/50">
-									<span>Entrada <strong className="text-white">{r.entrada}</strong></span>
-									{r.almoco && <span>Almoço <strong className="text-white">{r.almoco}</strong></span>}
-									{r.retorno && <span>Retorno <strong className="text-white">{r.retorno}</strong></span>}
-									<span>Saída <strong className="text-white">{r.saida}</strong></span>
-								</div>
-								<span className={`text-sm font-bold shrink-0 ${r.extraMins >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-									{saldoLabel(r.extraMins)}
-								</span>
-								<button
-									onClick={() => { setEditando(idxOriginal); setAdicionando(false) }}
-									className="text-white/20 hover:text-[var(--accent-light)] transition-colors shrink-0"
-									title="Editar registro"
-								>
-									<EditIcon fontSize="small" />
-								</button>
-								<button
-									onClick={() => onExcluirRegistro(idxOriginal)}
-									className="text-white/20 hover:text-red-400 transition-colors shrink-0"
-									title="Excluir registro"
-								>
-									<DeleteOutlineIcon fontSize="small" />
-								</button>
-							</div>
-						)
-					})}
+							)}
+							{registrosOrdenados.map((r, i) => {
+								const idxOriginal = registros.indexOf(r)
+								if (editando === idxOriginal) {
+									return (
+										<FormRegistro
+											key={i}
+											registro={r}
+											jornadaPadrao={jornadaPadrao}
+											onConfirmar={(atualizado) => { onEditarRegistro(idxOriginal, atualizado); setEditando(null) }}
+											onCancelar={() => setEditando(null)}
+										/>
+									)
+								}
+								return (
+									<tr key={i} className="bg-[#1e2030] text-center">
+										<td className="px-3 py-3 rounded-l-xl text-white/60">{r.data}</td>
+										<td className="px-3 py-3 text-white">{r.entrada}</td>
+										<td className="px-3 py-3 text-white">{r.almoco || '—'}</td>
+										<td className="px-3 py-3 text-white">{r.retorno || '—'}</td>
+										<td className="px-3 py-3 text-white">{r.saida}</td>
+										<td className={`px-3 py-3 font-bold ${r.extraMins >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+											{saldoLabel(r.extraMins)}
+										</td>
+										<td className="px-3 py-3 rounded-r-xl">
+											<div className="flex gap-2 justify-end">
+												<button
+													onClick={() => { setEditando(idxOriginal); setAdicionando(false) }}
+													className="text-white/20 hover:text-[var(--accent-light)] transition-colors"
+													title="Editar registro"
+												>
+													<EditIcon fontSize="small" />
+												</button>
+												<button
+													onClick={() => onExcluirRegistro(idxOriginal)}
+													className="text-white/20 hover:text-red-400 transition-colors"
+													title="Excluir registro"
+												>
+													<DeleteOutlineIcon fontSize="small" />
+												</button>
+											</div>
+										</td>
+									</tr>
+								)
+							})}
+						</tbody>
+					</table>
 				</div>
 			)}
 
