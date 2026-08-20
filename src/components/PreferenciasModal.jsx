@@ -62,6 +62,21 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					<Row label="Salvar dados no navegador" desc="Lembra sua jornada diária (localStorage)">
 						<Toggle checked={local.salvarDados} onChange={v => set('salvarDados', v)} />
 					</Row>
+					<Row label="Exibir polaroids" desc="Quadros de foto na tela principal">
+						<div className="flex gap-1">
+							{[0, 2, 4].map(n => (
+								<button
+									key={n}
+									onClick={() => set('polaroids', n)}
+									className={`px-3 py-1 rounded-lg text-sm font-bold transition-colors ${
+										local.polaroids === n ? 'accent-bg text-white' : 'bg-white/10 text-white/40 hover:text-white'
+									}`}
+								>
+									{n === 0 ? 'Nenhum' : n}
+								</button>
+							))}
+						</div>
+					</Row>
 				</div>
 
 				{/* Cor de acento */}

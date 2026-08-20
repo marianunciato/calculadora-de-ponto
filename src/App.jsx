@@ -12,10 +12,11 @@ import PreferenciasModal from './components/PreferenciasModal'
 import Historico from './components/Historico'
 import MensagemDiaria from './components/MensagemDiaria'
 import CardNovidade from './components/CardNovidade'
+import Polaroid from './components/Polaroid'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
-const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro', cor: 'roxo' }
+const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro', cor: 'roxo', polaroids: 0 }
 function loadPrefs() {
 	try { return { ...PREFS_DEFAULT, ...JSON.parse(localStorage.getItem('preferencias')) } }
 	catch { return PREFS_DEFAULT }
@@ -178,7 +179,12 @@ export default function App() {
 			<Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} />
 			<main className={`flex-1 flex justify-center p-6 ${tab === 'banco' ? 'items-start' : 'items-center'}`}>
 				{tab === 'calculadora' ? (
-					<div className="w-full max-w-2xl flex flex-col gap-4">
+					<div className="w-full max-w-5xl flex items-center justify-center gap-6">
+						<div className="hidden lg:flex flex-col gap-8 items-end">
+							{prefs.polaroids > 0 && <Polaroid id="1" rotate={-4} />}
+							{prefs.polaroids > 2 && <Polaroid id="2" rotate={3} style={{ marginRight: '1.5rem' }}/>}
+						</div>
+						<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
 						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
 						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
 							<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
@@ -211,6 +217,11 @@ export default function App() {
 									;['entrada', 'almoco', 'retorno'].forEach(k => localStorage.removeItem(k))
 								}}
 							/>
+						</div>
+						</div>
+						<div className="hidden lg:flex flex-col gap-8 items-start">
+							{prefs.polaroids > 0 && <Polaroid id="3" rotate={3} style={{ marginLeft: '1rem' }}/>}
+							{prefs.polaroids > 2 && <Polaroid id="4" rotate={-5}/>}
 						</div>
 					</div>
 				) : (

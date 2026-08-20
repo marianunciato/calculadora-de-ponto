@@ -2,9 +2,9 @@ import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CelebrationIcon from '@mui/icons-material/Celebration'
 
-const NOVIDADE = 'Temas coloridos disponíveis! Personalize na modal de preferências.'
+const NOVIDADE = 'Adicione imagens de coisas que você sente falta no presencial! Mate a saúdade a qualquer momento, ativando dois ou quatro widgets fofos na modal de preferências.'
 
-const NOVIDADE_ID = 'novidade-paletas-v3'
+const NOVIDADE_ID = 'novidade-paletas-v4'
 
 export default function CardNovidade() {
 	const [visivel, setVisivel] = useState(() => localStorage.getItem(NOVIDADE_ID) !== 'fechado')
