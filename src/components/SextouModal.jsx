@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close'
 const VIDEO_ID = '6W7HauaG3Bg'
 
 function isSexta() {
-	return true // TEMP: remover antes de subir
+	return new Date().getDay() === 5
 }
 
 function jaViuHoje() {
