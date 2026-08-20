@@ -35,7 +35,7 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 	return (
 		<div
 			style={{ transform: `rotate(${rotate}deg)`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', ...style }}
-			className="bg-white p-2 pb-2 w-44 shrink-0 cursor-pointer group"
+			className="bg-white p-2 pb-2 w-48 shrink-0 cursor-pointer group"
 			onClick={() => inputRef.current.click()}
 			title={src ? 'Clique para trocar a foto' : 'Clique para adicionar uma foto'}
 		>
@@ -64,8 +64,8 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 					onChange={handleLegenda}
 					placeholder="legenda..."
 					maxLength={MAX_CHARS}
-					className="w-full text-center text-black/70 placeholder:text-black/25 bg-transparent outline-none text-sm"
-					style={{ fontFamily: "'Caveat', cursive", fontSize: '1rem' }}
+					className="w-full text-center text-black/70 placeholder:text-black/25 bg-transparent outline-none text-md"
+					style={{ fontFamily: "'Caveat', cursive", fontSize: '1.3rem' }}
 				/>
 			</div>
 			<input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
