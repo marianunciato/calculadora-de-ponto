@@ -2,7 +2,7 @@ import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CelebrationIcon from '@mui/icons-material/Celebration'
 
-const NOVIDADE = 'Adicione imagens de coisas que você sente falta no presencial! Mate a saúdade a qualquer momento, ativando dois ou quatro widgets fofos na modal de preferências.'
+const NOVIDADE = 'Deixe seu ponto mais acolhedor! ✨ Fixe imagens de tudo aquilo que você ama e sente falta durante o dia. Na modal de preferências, escolha entre 2 e 4 widgets de polaroids e mate a saudade a qualquer momento.'
 
 const NOVIDADE_ID = 'novidade-paletas-v4'
 

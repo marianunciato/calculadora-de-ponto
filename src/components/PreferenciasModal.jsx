@@ -62,7 +62,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					<Row label="Salvar dados no navegador" desc="Lembra sua jornada diária (localStorage)">
 						<Toggle checked={local.salvarDados} onChange={v => set('salvarDados', v)} />
 					</Row>
-					<Row label="Exibir polaroids" desc="Quadros de foto na tela principal">
+					<Row label="Polaroids" desc="Quadros de foto na tela principal">
 						<div className="flex gap-1">
 							{[0, 2, 4].map(n => (
 								<button
