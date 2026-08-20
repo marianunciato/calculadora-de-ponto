@@ -135,6 +135,16 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					</Row>
 				</div>
 
+				{/* Créditos */}
+				<a
+					href="https://www.linkedin.com/in/marianunciato/"
+					target="_blank"
+					rel="noreferrer"
+					className="text-center text-xs text-white/20 hover:text-white/50 transition-colors"
+				>
+					feito com 💜 por Maria Eduarda Anunciato
+				</a>
+
 				{/* Ações */}
 				<div className="flex gap-3">
 					<button

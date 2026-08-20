@@ -7,7 +7,6 @@ import Header from './components/Header'
 import JornadaInput from './components/JornadaInput'
 import TimeInput from './components/TimeInput'
 import Resultado from './components/Resultado'
-import Footer from './components/Footer'
 import PreferenciasModal from './components/PreferenciasModal'
 import Historico from './components/Historico'
 import MensagemDiaria from './components/MensagemDiaria'
@@ -258,7 +257,6 @@ export default function App() {
 					/>
 				)}
 			</main>
-			<Footer />
 			<CardNovidade />
 			<SextouModal />
 			{modalAberta && <PreferenciasModal prefs={prefs} onSalvar={salvarPrefs} onFechar={() => setModalAberta(false)} />}
