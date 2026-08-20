@@ -32,7 +32,7 @@ export default function SextouModal() {
 				</button>
 				<div className="w-full aspect-video rounded-2xl overflow-hidden">
 					<iframe
-						src={`https://www.youtube.com/embed/${VIDEO_ID}`}
+						src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1`}
 						allow="autoplay; encrypted-media"
 						allowFullScreen
 						className="w-full h-full"

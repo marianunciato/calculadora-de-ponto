@@ -34,8 +34,8 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 
 	return (
 		<div
-			style={{ transform: `rotate(${rotate}deg)`, boxShadow: '0 5px 20px rgba(0,0,0,0.2)', ...style }}
-			className="bg-white p-2 pb-2 w-48 shrink-0 cursor-pointer group"
+			style={{ '--rotate': `${rotate}deg`, transform: `rotate(${rotate}deg)`, boxShadow: '0 5px 20px rgba(0,0,0,0.2)', ...style }}
+			className={`bg-white p-2 pb-2 w-48 shrink-0 cursor-pointer group${src ? ' animate-polaroid' : ''}`}
 			onClick={() => inputRef.current.click()}
 			title={src ? 'Clique para trocar a foto' : 'Clique para adicionar uma foto'}
 		>
@@ -57,7 +57,7 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 					</div>
 				)}
 			</div>
-			<div className="h-8 flex items-center justify-center" onClick={e => e.stopPropagation()}>
+			<div className="h-8 flex items-center justify-center relative" onClick={e => e.stopPropagation()}>
 				<input
 					type="text"
 					value={legenda}
@@ -67,6 +67,15 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 					className="w-full text-center text-black/70 placeholder:text-black/25 bg-transparent outline-none text-md"
 					style={{ fontFamily: "'Caveat', cursive", fontSize: '1.3rem' }}
 				/>
+				{legenda && (
+					<button
+						onClick={() => { setLegenda(''); localStorage.removeItem(`polaroid-legenda-${id}`) }}
+						className="absolute right-0 text-black/20 opacity-0 group-hover:opacity-100 hover:text-black/50 transition-all"
+						title="Limpar legenda"
+					>
+						<DeleteOutlineIcon style={{ fontSize: '0.9rem' }} />
+					</button>
+				)}
 			</div>
 			<input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
 		</div>
