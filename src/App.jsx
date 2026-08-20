@@ -68,7 +68,7 @@ export default function App() {
 	function registrarPonto() {
 		if (!entrada || !almoco || !retorno) return
 		const agora = new Date()
-		const saidaFinal = `${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`
+		const saidaFinal = saidaReal || `${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`
 		const hoje = agora.toLocaleDateString('pt-BR')
 		const jornadaMins = toMinutes(jornada)
 		const intervaloMins = toMinutes(retorno) - toMinutes(almoco)
@@ -89,8 +89,10 @@ export default function App() {
 		const _jornada = jornadaRef.current
 		const _historico = historicoRef.current
 		if (!_entrada || !_almoco || !_retorno) return
-		const hoje = new Date().toLocaleDateString('pt-BR')
-		const jaRegistrado = _historico.some(r => r.data === hoje)
+		const hoje = new Date()
+		hoje.setDate(hoje.getDate() - 1)
+		const dataOntem = hoje.toLocaleDateString('pt-BR')
+		const jaRegistrado = _historico.some(r => r.data === dataOntem)
 		if (jaRegistrado || autoRegistradoRef.current) return
 		autoRegistradoRef.current = true
 		const saidaFinal = _saidaReal || _saida
@@ -98,7 +100,7 @@ export default function App() {
 		const intervaloMins = toMinutes(_retorno) - toMinutes(_almoco)
 		const trabalhadoMins = toMinutes(saidaFinal) - toMinutes(_entrada) - Math.max(0, intervaloMins)
 		const extraMins = trabalhadoMins - jornadaMins
-		const novo = { data: hoje, entrada: _entrada, saida: saidaFinal, saidaEstimada: _saida, almoco: _almoco, retorno: _retorno, extraMins, jornada: _jornada }
+		const novo = { data: dataOntem, entrada: _entrada, saida: saidaFinal, saidaEstimada: _saida, almoco: _almoco, retorno: _retorno, extraMins, jornada: _jornada }
 		const atualizado = [..._historico, novo]
 		setHistorico(atualizado)
 		localStorage.setItem('historico', JSON.stringify(atualizado))
@@ -214,6 +216,14 @@ export default function App() {
 				) : (
 					<Historico
 						registros={historico}
+						jornadaPadrao={prefs.jornadaPadrao}
+						onAdicionarRegistro={(novo) => {
+							setHistorico(prev => {
+								const atualizado = [...prev, novo]
+								localStorage.setItem('historico', JSON.stringify(atualizado))
+								return atualizado
+							})
+						}}
 						onLimparHistorico={() => { setHistorico([]); localStorage.removeItem('historico') }}
 						onExcluirRegistro={(idx) => {
 							setHistorico(prev => {

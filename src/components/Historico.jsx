@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import DownloadIcon from '@mui/icons-material/Download'
+import AddIcon from '@mui/icons-material/Add'
 import { toMinutes } from '../utils/time'
 
 function saldoLabel(mins) {
@@ -13,29 +14,42 @@ function saldoLabel(mins) {
 	return `${mins >= 0 ? '+' : '-'}${h}:${m}`
 }
 
-function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
+function FormRegistro({ registro, jornadaPadrao, onConfirmar, onCancelar }) {
 	const [form, setForm] = useState({
-		data: registro.data,
-		entrada: registro.entrada,
-		almoco: registro.almoco ?? '',
-		retorno: registro.retorno ?? '',
-		saida: registro.saida,
+		data: registro?.data ?? '',
+		entrada: registro?.entrada ?? '',
+		almoco: registro?.almoco ?? '',
+		retorno: registro?.retorno ?? '',
+		saida: registro?.saida ?? '',
 	})
 	const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
 
 	function confirmar() {
+		if (!form.data || !form.entrada || !form.saida) return
 		const intervaloMins = form.almoco && form.retorno ? Math.max(0, toMinutes(form.retorno) - toMinutes(form.almoco)) : 0
 		const trabalhadoMins = toMinutes(form.saida) - toMinutes(form.entrada) - intervaloMins
-		const jornadaMins = registro.jornada
-			? toMinutes(registro.jornada)
-			: toMinutes(registro.saidaEstimada) - toMinutes(form.entrada) - intervaloMins
+		const jornadaMins = registro?.jornada ? toMinutes(registro.jornada) : toMinutes(jornadaPadrao)
 		const extraMins = trabalhadoMins - jornadaMins
-		onConfirmar({ ...registro, ...form, extraMins })
+		onConfirmar({ ...(registro ?? {}), ...form, extraMins, jornada: registro?.jornada ?? jornadaPadrao })
 	}
+
+	const dataISO = form.data ? form.data.split('/').reverse().join('-') : ''
 
 	return (
 		<div className="bg-[#1e2030] rounded-xl px-4 py-3 flex flex-col gap-3">
 			<div className="flex flex-wrap gap-3 text-xs">
+				<label className="flex flex-col gap-1 text-white/50">
+					Data
+					<input
+						type="date"
+						value={dataISO}
+						onChange={e => {
+							const [y, m, d] = e.target.value.split('-')
+							setForm(f => ({ ...f, data: `${d}/${m}/${y}` }))
+						}}
+						className="bg-[#0d0f1a] text-white rounded-lg px-2 py-1 outline-none border border-white/10 focus:border-[var(--accent)]"
+					/>
+				</label>
 				{[['Entrada', 'entrada'], ['Almoço', 'almoco'], ['Retorno', 'retorno'], ['Saída', 'saida']].map(([label, key]) => (
 					<label key={key} className="flex flex-col gap-1 text-white/50">
 						{label}
@@ -56,9 +70,14 @@ function EditandoRegistro({ registro, onConfirmar, onCancelar }) {
 	)
 }
 
-export default function Historico({ registros, onLimparHistorico, onExcluirRegistro, onEditarRegistro }) {
+export default function Historico({ registros, jornadaPadrao, onLimparHistorico, onExcluirRegistro, onEditarRegistro, onAdicionarRegistro }) {
 	const [editando, setEditando] = useState(null)
+	const [adicionando, setAdicionando] = useState(false)
 	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
+	const registrosOrdenados = registros.slice().sort((a, b) => {
+		const toDate = d => d.split('/').reverse().join('-')
+		return toDate(b.data) > toDate(a.data) ? 1 : -1
+	})
 	const bancoTotal = registros.reduce((acc, r) => acc + r.extraMins, 0)
 
 	function exportarCSV() {
@@ -88,28 +107,46 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 						{saldoLabel(bancoTotal)}
 					</span>
 				</div>
-				<div className="text-right">
+				<div className="flex flex-col items-center justify-center">
 					<p className="text-xs text-white/40">{registros.length} dia{registros.length !== 1 ? 's' : ''} registrado{registros.length !== 1 ? 's' : ''}</p>
 					{registros.length > 0 && (
-						<button onClick={exportarCSV} className="mt-2 flex items-center gap-1 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors ml-auto">
+						<button onClick={exportarCSV} className="mt-2 flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors ml-auto">
 							<DownloadIcon fontSize="small" />
 							Exportar CSV
 						</button>
 					)}
+					
 				</div>
+				<button
+					onClick={() => { setAdicionando(true); setEditando(null) }}
+					className="mt-3 flex items-center justify-center gap-2 accent-bg accent-bg-hover transition-colors rounded-xl px-4 py-2 text-xs font-bold tracking-widest uppercase"
+				>
+					<AddIcon fontSize="small" />
+					Adicionar dia
+				</button>
 			</div>
 
-			{registros.length === 0 ? (
+			{adicionando && (
+				<FormRegistro
+					registro={null}
+					jornadaPadrao={jornadaPadrao}
+					onConfirmar={(novo) => { onAdicionarRegistro(novo); setAdicionando(false) }}
+					onCancelar={() => setAdicionando(false)}
+				/>
+			)}
+
+			{registros.length === 0 && !adicionando ? (
 				<p className="text-center text-white/30 text-sm py-8">Nenhum registro ainda.<br />Use o botão "Registrar Dia" na calculadora.</p>
 			) : (
 				<div className="flex flex-col gap-2">
-					{registros.slice().reverse().map((r, i) => {
-						const idxOriginal = registros.length - 1 - i
+					{registrosOrdenados.map((r, i) => {
+						const idxOriginal = registros.indexOf(r)
 						if (editando === idxOriginal) {
 							return (
-								<EditandoRegistro
+								<FormRegistro
 									key={i}
 									registro={r}
+									jornadaPadrao={jornadaPadrao}
 									onConfirmar={(atualizado) => { onEditarRegistro(idxOriginal, atualizado); setEditando(null) }}
 									onCancelar={() => setEditando(null)}
 								/>
@@ -128,7 +165,7 @@ export default function Historico({ registros, onLimparHistorico, onExcluirRegis
 									{saldoLabel(r.extraMins)}
 								</span>
 								<button
-									onClick={() => setEditando(idxOriginal)}
+									onClick={() => { setEditando(idxOriginal); setAdicionando(false) }}
 									className="text-white/20 hover:text-[var(--accent-light)] transition-colors shrink-0"
 									title="Editar registro"
 								>
