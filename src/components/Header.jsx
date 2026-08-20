@@ -4,7 +4,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 export default function Header({ onAbrirPrefs, tab, onTab }) {
 	return (
 		<header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/10">
-			<div className="flex items-center gap-2 accent-text font-bold text-lg">
+			<div className="flex items-center gap-2 accent-text font-bold text-lg w-18">
 				<ScheduleIcon fontSize="small" />
 				<span className="accent-text">Dora</span>
 			</div>
@@ -21,7 +21,7 @@ export default function Header({ onAbrirPrefs, tab, onTab }) {
 					</button>
 				))}
 			</div>
-			<button onClick={onAbrirPrefs} className="text-white/40 hover:text-white transition-colors">
+			<button onClick={onAbrirPrefs} className="text-white/40 hover:text-white transition-colors w-18 flex justify-end items-center">
 				<SettingsIcon fontSize="small" />
 			</button>
 		</header>

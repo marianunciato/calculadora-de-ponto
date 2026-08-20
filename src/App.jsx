@@ -12,6 +12,7 @@ import PreferenciasModal from './components/PreferenciasModal'
 import Historico from './components/Historico'
 import MensagemDiaria from './components/MensagemDiaria'
 import CardNovidade from './components/CardNovidade'
+import SextouModal from './components/SextouModal'
 import Polaroid from './components/Polaroid'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
@@ -184,7 +185,10 @@ export default function App() {
 							{prefs.polaroids > 0 && <Polaroid id="1" rotate={-4} />}
 							{prefs.polaroids > 2 && <Polaroid id="2" rotate={3} style={{ marginRight: '1.5rem' }}/>}
 						</div>
-						<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
+					<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
+						<p className="text-sm text-center text-white/30 uppercase">
+							{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+						</p>
 						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
 						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
 							<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
@@ -256,6 +260,7 @@ export default function App() {
 			</main>
 			<Footer />
 			<CardNovidade />
+			<SextouModal />
 			{modalAberta && <PreferenciasModal prefs={prefs} onSalvar={salvarPrefs} onFechar={() => setModalAberta(false)} />}
 		</div>
 	)
