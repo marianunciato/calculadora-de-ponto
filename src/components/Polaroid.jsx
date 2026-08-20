@@ -34,7 +34,7 @@ export default function Polaroid({ id, rotate = -3, style = {} }) {
 
 	return (
 		<div
-			style={{ transform: `rotate(${rotate}deg)`, boxShadow: '0 5px 20px rgba(0,0,0,0.1)', ...style }}
+			style={{ transform: `rotate(${rotate}deg)`, boxShadow: '0 5px 20px rgba(0,0,0,0.2)', ...style }}
 			className="bg-white p-2 pb-2 w-48 shrink-0 cursor-pointer group"
 			onClick={() => inputRef.current.click()}
 			title={src ? 'Clique para trocar a foto' : 'Clique para adicionar uma foto'}
