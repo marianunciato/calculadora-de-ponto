@@ -1,11 +1,11 @@
-import ScheduleIcon from '@mui/icons-material/Schedule'
+import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export default function Header({ onAbrirPrefs, tab, onTab }) {
 	return (
 		<header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/10">
 			<div className="flex items-center gap-2 accent-text font-bold text-lg w-18">
-				<ScheduleIcon fontSize="small" />
+				<HistoryToggleOffIcon fontSize="small" />
 				<span className="accent-text">Dora</span>
 			</div>
 			<div className="flex">
