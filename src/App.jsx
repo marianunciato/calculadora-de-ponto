@@ -254,6 +254,14 @@ export default function App() {
 								return novo
 							})
 						}}
+						onImportarRegistros={(novos) => {
+							setHistorico(prev => {
+								const datasExistentes = new Set(prev.map(r => r.data))
+								const atualizado = [...prev, ...novos.filter(r => !datasExistentes.has(r.data))]
+								localStorage.setItem('historico', JSON.stringify(atualizado))
+								return atualizado
+							})
+						}}
 					/>
 				)}
 			</main>

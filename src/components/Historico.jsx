@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import DownloadIcon from '@mui/icons-material/Download'
+import UploadIcon from '@mui/icons-material/Upload'
 import AddIcon from '@mui/icons-material/Add'
 import { toMinutes } from '../utils/time'
 
@@ -61,10 +62,31 @@ function FormRegistro({ registro, jornadaPadrao, onConfirmar, onCancelar }) {
 	)
 }
 
-export default function Historico({ registros, jornadaPadrao, onLimparHistorico, onExcluirRegistro, onEditarRegistro, onAdicionarRegistro }) {
+export default function Historico({ registros, jornadaPadrao, onLimparHistorico, onExcluirRegistro, onEditarRegistro, onAdicionarRegistro, onImportarRegistros }) {
 	const [editando, setEditando] = useState(null)
 	const [adicionando, setAdicionando] = useState(false)
 	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
+	const fileInputRef = useState(null)
+
+	function importarCSV(e) {
+		const file = e.target.files[0]
+		if (!file) return
+		e.target.value = ''
+		const reader = new FileReader()
+		reader.onload = (ev) => {
+			const linhas = ev.target.result.trim().split('\n').slice(1)
+			const novos = linhas.map(linha => {
+				const [data, entrada, almoco, retorno, saida] = linha.split(';').map(s => s.trim())
+				if (!data || !entrada || !saida) return null
+				const intervaloMins = almoco && retorno ? Math.max(0, toMinutes(retorno) - toMinutes(almoco)) : 0
+				const trabalhadoMins = toMinutes(saida) - toMinutes(entrada) - intervaloMins
+				const extraMins = trabalhadoMins - toMinutes(jornadaPadrao)
+				return { data, entrada, almoco: almoco || '', retorno: retorno || '', saida, extraMins, jornada: jornadaPadrao }
+			}).filter(Boolean)
+			onImportarRegistros(novos)
+		}
+		reader.readAsText(file)
+	}
 	const registrosOrdenados = registros.slice().sort((a, b) => {
 		const toDate = d => d.split('/').reverse().join('-')
 		return toDate(b.data) > toDate(a.data) ? 1 : -1
@@ -98,15 +120,19 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 						{saldoLabel(bancoTotal)}
 					</span>
 				</div>
-				<div className="flex flex-col items-center justify-center">
+				<div className="flex flex-col items-center gap-1">
 					<p className="text-xs text-white/40">{registros.length} dia{registros.length !== 1 ? 's' : ''} registrado{registros.length !== 1 ? 's' : ''}</p>
 					{registros.length > 0 && (
-						<button onClick={exportarCSV} className="mt-2 flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors ml-auto">
+						<button onClick={exportarCSV} className="flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors">
 							<DownloadIcon fontSize="small" />
 							Exportar CSV
 						</button>
 					)}
-					
+					<button onClick={() => document.getElementById('csv-import-input').click()} className="flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors">
+						<UploadIcon fontSize="small" />
+						Importar CSV
+					</button>
+					<input id="csv-import-input" type="file" accept=".csv" className="hidden" onChange={importarCSV} />
 				</div>
 				<button
 					onClick={() => { setAdicionando(true); setEditando(null) }}
