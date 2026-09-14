@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
@@ -6,7 +6,28 @@ import CloseIcon from '@mui/icons-material/Close'
 import DownloadIcon from '@mui/icons-material/Download'
 import UploadIcon from '@mui/icons-material/Upload'
 import AddIcon from '@mui/icons-material/Add'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { toMinutes } from '../utils/time'
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+
+function mesLabel(mmyyyy) {
+	const [m, y] = mmyyyy.split('/')
+	return `${MESES[parseInt(m) - 1]} ${y}`
+}
+
+function mesAtualStr() {
+	const d = new Date()
+	return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
+}
+
+function navegarMes(mmyyyy, delta) {
+	const [m, y] = mmyyyy.split('/').map(Number)
+	const d = new Date(y, m - 1 + delta, 1)
+	return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
+}
 
 function saldoLabel(mins) {
 	const abs = Math.abs(mins)
@@ -66,7 +87,28 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 	const [editando, setEditando] = useState(null)
 	const [adicionando, setAdicionando] = useState(false)
 	const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
-	const fileInputRef = useState(null)
+	const [conflitos, setConflitos] = useState(null)
+	const [mes, setMes] = useState(mesAtualStr)
+	const [ordemDesc, setOrdemDesc] = useState(true)
+
+	const mesesComRegistro = useMemo(() => {
+		const set = new Set(registros.map(r => r.data.slice(3)))
+		return set
+	}, [registros])
+
+	const registrosFiltrados = useMemo(() =>
+		registros.filter(r => r.data.slice(3) === mes)
+	, [registros, mes])
+
+	const saldoMes = registrosFiltrados.reduce((acc, r) => acc + r.extraMins, 0)
+
+	function parseLinha(linha) {
+		const [data, entrada, almoco, retorno, saida] = linha.split(';').map(s => s.trim())
+		if (!data || !entrada || !saida) return null
+		const intervaloMins = almoco && retorno ? Math.max(0, toMinutes(retorno) - toMinutes(almoco)) : 0
+		const extraMins = toMinutes(saida) - toMinutes(entrada) - intervaloMins - toMinutes(jornadaPadrao)
+		return { data, entrada, almoco: almoco || '', retorno: retorno || '', saida, extraMins, jornada: jornadaPadrao }
+	}
 
 	function importarCSV(e) {
 		const file = e.target.files[0]
@@ -74,22 +116,34 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 		e.target.value = ''
 		const reader = new FileReader()
 		reader.onload = (ev) => {
-			const linhas = ev.target.result.trim().split('\n').slice(1)
-			const novos = linhas.map(linha => {
-				const [data, entrada, almoco, retorno, saida] = linha.split(';').map(s => s.trim())
-				if (!data || !entrada || !saida) return null
-				const intervaloMins = almoco && retorno ? Math.max(0, toMinutes(retorno) - toMinutes(almoco)) : 0
-				const trabalhadoMins = toMinutes(saida) - toMinutes(entrada) - intervaloMins
-				const extraMins = trabalhadoMins - toMinutes(jornadaPadrao)
-				return { data, entrada, almoco: almoco || '', retorno: retorno || '', saida, extraMins, jornada: jornadaPadrao }
-			}).filter(Boolean)
-			onImportarRegistros(novos)
+			const novos = ev.target.result.trim().split('\n').slice(1).map(parseLinha).filter(Boolean)
+			const datasExistentes = new Map(registros.map(r => [r.data, r]))
+			const semConflito = []
+			const fila = []
+			for (const r of novos) {
+				if (datasExistentes.has(r.data)) fila.push({ existente: datasExistentes.get(r.data), importado: r })
+				else semConflito.push(r)
+			}
+			if (fila.length > 0) setConflitos({ fila, semConflito, escolhas: [] })
+			else onImportarRegistros(semConflito)
 		}
 		reader.readAsText(file)
 	}
-	const registrosOrdenados = registros.slice().sort((a, b) => {
+
+	function resolverConflito(escolhido) {
+		const { fila, semConflito, escolhas } = conflitos
+		const novasEscolhas = [...escolhas, escolhido]
+		if (fila.length === 1) {
+			onImportarRegistros([...semConflito, ...novasEscolhas])
+			setConflitos(null)
+		} else {
+			setConflitos({ fila: fila.slice(1), semConflito, escolhas: novasEscolhas })
+		}
+	}
+	const registrosOrdenados = registrosFiltrados.slice().sort((a, b) => {
 		const toDate = d => d.split('/').reverse().join('-')
-		return toDate(b.data) > toDate(a.data) ? 1 : -1
+		const cmp = toDate(a.data) > toDate(b.data) ? 1 : -1
+		return ordemDesc ? -cmp : cmp
 	})
 	const bancoTotal = registros.reduce((acc, r) => acc + r.extraMins, 0)
 
@@ -114,14 +168,14 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 			<div className="bg-[#1e2030] rounded-2xl p-6 flex items-center justify-between">
 				<div>
 					<p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60 mb-2">
-						{bancoTotal >= 0 ? 'Banco de Horas' : 'Horas Devendo'}
+						{saldoMes >= 0 ? 'Saldo do Mês' : 'Débito do Mês'}
 					</p>
-					<span className={`text-5xl font-thin tracking-widest ${bancoTotal >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-						{saldoLabel(bancoTotal)}
+					<span className={`text-5xl font-thin tracking-widest ${saldoMes >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+						{saldoLabel(saldoMes)}
 					</span>
+					<p className="text-xs text-white/30 mt-1">total geral: <span className={bancoTotal >= 0 ? 'text-green-400/60' : 'text-red-400/60'}>{saldoLabel(bancoTotal)}</span></p>
 				</div>
-				<div className="flex flex-col items-center gap-1">
-					<p className="text-xs text-white/40">{registros.length} dia{registros.length !== 1 ? 's' : ''} registrado{registros.length !== 1 ? 's' : ''}</p>
+				<div className="flex flex-col items-end gap-1">
 					{registros.length > 0 && (
 						<button onClick={exportarCSV} className="flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors">
 							<DownloadIcon fontSize="small" />
@@ -143,14 +197,32 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 				</button>
 			</div>
 
+			{registros.length > 0 && (
+				<div className="flex items-center justify-between px-1">
+					<button onClick={() => setMes(m => navegarMes(m, -1))} disabled={!mesesComRegistro.has(navegarMes(mes, -1))} className="text-white/30 hover:text-white disabled:opacity-20 transition-colors"><ChevronLeftIcon /></button>
+					<div className="text-center">
+						<span className="text-sm font-semibold text-white/80">{mesLabel(mes)}</span>
+						<p className="text-xs text-white/30">{registrosFiltrados.length} dia{registrosFiltrados.length !== 1 ? 's' : ''} registrado{registrosFiltrados.length !== 1 ? 's' : ''}</p>
+					</div>
+					<button onClick={() => setMes(m => navegarMes(m, 1))} disabled={!mesesComRegistro.has(navegarMes(mes, 1))} className="text-white/30 hover:text-white disabled:opacity-20 transition-colors"><ChevronRightIcon /></button>
+				</div>
+			)}
+
 			{registros.length === 0 && !adicionando ? (
 				<p className="text-center text-white/30 text-sm py-8">Nenhum registro ainda.<br />Use o botão "Registrar Dia" na calculadora.</p>
+			) : registrosFiltrados.length === 0 && !adicionando ? (
+				<p className="text-center text-white/30 text-sm py-8">Nenhum registro em {mesLabel(mes)}.</p>
 			) : (
 				<div className="overflow-x-auto">
 					<table className="w-full text-xs text-white/70 border-separate border-spacing-y-1">
 						<thead>
 							<tr className="text-white/30 uppercase tracking-widest text-center">
-								<th className="px-3 py-2 font-medium">Data</th>
+								<th className="px-3 py-2 font-medium">
+									<button onClick={() => setOrdemDesc(o => !o)} className="flex items-center gap-1 mx-auto text-white/30 hover:text-white/70 transition-colors uppercase tracking-widest">
+										Data
+										<ArrowUpwardIcon fontSize="inherit" style={{ transition: 'transform 0.2s', transform: ordemDesc ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+									</button>
+								</th>
 								<th className="px-3 py-2 font-medium">Entrada</th>
 								<th className="px-3 py-2 font-medium">Almoço</th>
 								<th className="px-3 py-2 font-medium">Retorno</th>
@@ -216,6 +288,30 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 					</table>
 				</div>
 			)}
+
+			{conflitos && (() => {
+				const { fila } = conflitos
+				const { existente, importado } = fila[0]
+				const linhaReg = (r) => `${r.entrada} → ${r.saida}${r.almoco ? ` (almoço ${r.almoco}–${r.retorno})` : ''} · ${saldoLabel(r.extraMins)}`
+				return (
+					<div className="bg-[#1e2030] rounded-2xl p-5 flex flex-col gap-3">
+						<p className="text-xs text-white/50 uppercase tracking-widest">
+							Conflito em <span className="text-white/80 font-bold">{existente.data}</span>
+							{fila.length > 1 && <span className="ml-2 text-white/30">({fila.length} restantes)</span>}
+						</p>
+						<div className="grid grid-cols-2 gap-3">
+							{[['Manter atual', existente], ['Usar importado', importado]].map(([label, reg]) => (
+								<button key={label} onClick={() => resolverConflito(reg)}
+									className="flex flex-col gap-1 bg-[#0d0f1a] hover:border-[var(--accent)] border border-white/10 rounded-xl px-4 py-3 text-left transition-colors">
+									<span className="text-xs font-bold text-white/60 uppercase tracking-widest">{label}</span>
+									<span className="text-xs text-white/80">{linhaReg(reg)}</span>
+								</button>
+							))}
+						</div>
+						<button onClick={() => setConflitos(null)} className="text-xs text-white/20 hover:text-white/50 transition-colors self-end">Cancelar importação</button>
+					</div>
+				)
+			})()}
 
 			{registros.length > 0 && (
 				confirmandoLimpar ? (
