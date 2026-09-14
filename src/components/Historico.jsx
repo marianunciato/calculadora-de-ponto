@@ -8,6 +8,7 @@ import UploadIcon from '@mui/icons-material/Upload'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { toMinutes } from '../utils/time'
 
@@ -90,6 +91,7 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 	const [conflitos, setConflitos] = useState(null)
 	const [mes, setMes] = useState(mesAtualStr)
 	const [ordemDesc, setOrdemDesc] = useState(true)
+	const [menuAberto, setMenuAberto] = useState(false)
 
 	const mesesComRegistro = useMemo(() => {
 		const set = new Set(registros.map(r => r.data.slice(3)))
@@ -175,26 +177,38 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 					</span>
 					<p className="text-xs text-white/30 mt-1">total geral: <span className={bancoTotal >= 0 ? 'text-green-400/60' : 'text-red-400/60'}>{saldoLabel(bancoTotal)}</span></p>
 				</div>
-				<div className="flex flex-col items-end gap-1">
-					{registros.length > 0 && (
-						<button onClick={exportarCSV} className="flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors">
-							<DownloadIcon fontSize="small" />
-							Exportar CSV
-						</button>
-					)}
-					<button onClick={() => document.getElementById('csv-import-input').click()} className="flex items-center gap-2 text-xs text-white/30 hover:text-[var(--accent-light)] transition-colors">
-						<UploadIcon fontSize="small" />
-						Importar CSV
+				<div className="flex items-center gap-2">
+					<button
+						onClick={() => { setAdicionando(true); setEditando(null) }}
+						className="flex items-center justify-center gap-2 accent-bg accent-bg-hover transition-colors rounded-xl px-4 py-2 text-xs font-bold tracking-widest uppercase"
+					>
+						<AddIcon fontSize="small" />
+						Adicionar dia
 					</button>
-					<input id="csv-import-input" type="file" accept=".csv" className="hidden" onChange={importarCSV} />
+					<div className="relative">
+						<button
+							onClick={() => setMenuAberto(o => !o)}
+							className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
+						>
+							<MoreHorizIcon fontSize="small" />
+						</button>
+						{menuAberto && (
+							<div className="absolute right-0 top-11 z-10 bg-[#1e2030] border border-white/10 rounded-xl p-2 flex flex-col gap-1 min-w-[10rem] shadow-xl">
+								{registros.length > 0 && (
+									<button onClick={() => { exportarCSV(); setMenuAberto(false) }} className="flex items-center gap-2 text-xs text-white/50 hover:text-white hover:bg-white/5 rounded-lg px-3 py-2 transition-colors">
+										<DownloadIcon fontSize="small" />
+										Exportar CSV
+									</button>
+								)}
+								<button onClick={() => { document.getElementById('csv-import-input').click(); setMenuAberto(false) }} className="flex items-center gap-2 text-xs text-white/50 hover:text-white hover:bg-white/5 rounded-lg px-3 py-2 transition-colors">
+									<UploadIcon fontSize="small" />
+									Importar CSV
+								</button>
+								<input id="csv-import-input" type="file" accept=".csv" className="hidden" onChange={importarCSV} />
+							</div>
+						)}
+					</div>
 				</div>
-				<button
-					onClick={() => { setAdicionando(true); setEditando(null) }}
-					className="mt-3 flex items-center justify-center gap-2 accent-bg accent-bg-hover transition-colors rounded-xl px-4 py-2 text-xs font-bold tracking-widest uppercase"
-				>
-					<AddIcon fontSize="small" />
-					Adicionar dia
-				</button>
 			</div>
 
 			{registros.length > 0 && (
