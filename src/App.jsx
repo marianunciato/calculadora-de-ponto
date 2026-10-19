@@ -22,6 +22,15 @@ function loadPrefs() {
 	catch { return PREFS_DEFAULT }
 }
 
+function Relogio() {
+	const [hora, setHora] = useState(() => new Date().toLocaleTimeString('pt-BR'))
+	useEffect(() => {
+		const id = setInterval(() => setHora(new Date().toLocaleTimeString('pt-BR')), 1000)
+		return () => clearInterval(id)
+	}, [])
+	return <span className="text-md font-bold tabular-nums text-white/90 tracking-widest">{hora}</span>
+}
+
 export default function App() {
 	const [tab, setTab] = useState('calculadora')
 	const [jornada, setJornada] = useState(() => localStorage.getItem('jornada') ?? loadPrefs().jornadaPadrao)
@@ -185,9 +194,13 @@ export default function App() {
 							{prefs.polaroids > 2 && <Polaroid id="2" rotate={3} style={{ marginRight: '1.5rem' }}/>}
 						</div>
 					<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
-						<p className="text-sm text-center text-white/30 uppercase">
-							{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-						</p>
+						<div className="flex items-center justify-center gap-3">
+							<p className="text-sm text-white/30 uppercase">
+								{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+							</p>
+							<span className="text-white/20">·</span>
+							<Relogio />
+						</div>
 						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
 						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
 							<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
