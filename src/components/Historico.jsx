@@ -118,7 +118,7 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 		e.target.value = ''
 		const reader = new FileReader()
 		reader.onload = (ev) => {
-			const novos = ev.target.result.trim().split('\n').slice(1).map(parseLinha).filter(Boolean)
+			const novos = ev.target.result.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').slice(1).map(parseLinha).filter(Boolean)
 			const datasExistentes = new Map(registros.map(r => [r.data, r]))
 			const semConflito = []
 			const fila = []
