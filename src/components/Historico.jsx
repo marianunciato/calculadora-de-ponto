@@ -105,7 +105,9 @@ export default function Historico({ registros, jornadaPadrao, onLimparHistorico,
 	const saldoMes = registrosFiltrados.reduce((acc, r) => acc + r.extraMins, 0)
 
 	function parseLinha(linha) {
+		console.log('linha bruta:', JSON.stringify(linha))
 		const [data, entrada, almoco, retorno, saida] = linha.split(';').map(s => s.trim())
+		console.log('campos:', { data, entrada, almoco, retorno, saida })
 		if (!data || !entrada || !saida) return null
 		const intervaloMins = almoco && retorno ? Math.max(0, toMinutes(retorno) - toMinutes(almoco)) : 0
 		const extraMins = toMinutes(saida) - toMinutes(entrada) - intervaloMins - toMinutes(jornadaPadrao)

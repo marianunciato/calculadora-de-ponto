@@ -106,7 +106,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				) : (
 					<button
 						onClick={() => setConfirmandoLimpar(true)}
-						className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1"
+						className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase flex-1 cursor-pointer"
 					>
 						<Delete fontSize="small" />
 						Limpar

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CelebrationIcon from '@mui/icons-material/Celebration'
 
-const NOVIDADE = 'Trocou de dispositivo ou navegador? Sem problemas! Agora você pode importar seu banco de horas exportando o arquivo CSV do dispositivo antigo, e importando este mesmo arquivo no dispositivo novo. Tenha certeza de que o arquivo segue os padrões do sistema, para evitar erros na importação. Aproveite a novidade! 🎉'
+const NOVIDADE = 'Agora você pode colar post-its por aí — checklists pra não esquecer nada, ou notas soltas pra anotar o que vier na cabeça, além dos Polaroids, que antes eram fixos. Aproveite widgets coloridos, arrastáveis e sempre salvos. Procure o ícone de nota lá no canto superior direito para começar!'
 
-const NOVIDADE_ID = 'novidade-paletas-v5'
+const NOVIDADE_ID = 'novidade-paletas-v7'
 
 export default function CardNovidade() {
 	const [visivel, setVisivel] = useState(() => localStorage.getItem(NOVIDADE_ID) !== 'fechado')

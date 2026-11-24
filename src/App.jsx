@@ -13,10 +13,41 @@ import MensagemDiaria from './components/MensagemDiaria'
 import CardNovidade from './components/CardNovidade'
 import SextouModal from './components/SextouModal'
 import Polaroid from './components/Polaroid'
+import NotaPost from './components/NotaPost'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
 const PREFS_DEFAULT = { salvarDados: true, jornadaPadrao: '08:48', tolerancia: 10, notificarFim: false, tema: 'escuro', cor: 'roxo', polaroids: 0 }
+
+function migrarPolaroids() {
+	if (localStorage.getItem('polaroids-migradas')) return []
+	const novas = []
+	const rotates = [-4, 3, 3, -5]
+	for (let i = 1; i <= 4; i++) {
+		const src = localStorage.getItem(`polaroid-${i}`)
+		const legenda = localStorage.getItem(`polaroid-legenda-${i}`) ?? ''
+		if (src) {
+			novas.push({ id: Date.now() + i, tipo: 'polaroid', src, legenda, rotate: rotates[i - 1], x: 60 + i * 30, y: 100 + i * 20 })
+			localStorage.removeItem(`polaroid-${i}`)
+			localStorage.removeItem(`polaroid-legenda-${i}`)
+		}
+	}
+	if (novas.length) localStorage.setItem('polaroids-migradas', '1')
+	return novas
+}
+
+function loadNotas() {
+	try {
+		const salvas = JSON.parse(localStorage.getItem('notas-post')) ?? []
+		const migradas = migrarPolaroids()
+		if (migradas.length) {
+			const todas = [...salvas, ...migradas]
+			localStorage.setItem('notas-post', JSON.stringify(todas))
+			return todas
+		}
+		return salvas
+	} catch { return [] }
+}
 function loadPrefs() {
 	try { return { ...PREFS_DEFAULT, ...JSON.parse(localStorage.getItem('preferencias')) } }
 	catch { return PREFS_DEFAULT }
@@ -28,7 +59,7 @@ function Relogio() {
 		const id = setInterval(() => setHora(new Date().toLocaleTimeString('pt-BR')), 1000)
 		return () => clearInterval(id)
 	}, [])
-	return <span className="text-md font-bold tabular-nums text-white/90 tracking-widest">{hora}</span>
+	return <span className="text-md font-bold tabular-nums text-white/70 tracking-widest">{hora}</span>
 }
 
 export default function App() {
@@ -46,6 +77,7 @@ export default function App() {
 		try { return JSON.parse(localStorage.getItem('historico')) ?? [] }
 		catch { return [] }
 	})
+	const [notas, setNotas] = useState(loadNotas)
 	const [saidaReal, setSaidaReal] = useState('')
 	const [tick, setTick] = useState(0)
 
@@ -66,6 +98,22 @@ export default function App() {
 	useEffect(() => { almocoRef.current = almoco }, [almoco])
 	useEffect(() => { retornoRef.current = retorno }, [retorno])
 	useEffect(() => { historicoRef.current = historico }, [historico])
+
+	function salvarNotas(novas) {
+		setNotas(novas)
+		localStorage.setItem('notas-post', JSON.stringify(novas))
+	}
+	function novaNote(tipo = 'checklist') {
+		const base = {
+			id: Date.now(), tipo,
+			x: Math.min(window.innerWidth - 240, 80 + notas.length * 24),
+			y: Math.min(window.innerHeight - 300, 100 + notas.length * 24),
+		}
+		const extra = tipo === 'polaroid'
+			? { src: null, legenda: '', rotate: [-4, 3, -3, 4][notas.length % 4] }
+			: { titulo: '', linhas: [{ id: Date.now(), texto: '', feito: false }], texto: '' }
+		salvarNotas([...notas, { ...base, ...extra }])
+	}
 
 	function salvarPrefs(novasPrefs) {
 		setPrefs(novasPrefs)
@@ -185,15 +233,11 @@ export default function App() {
 
 	return (
 		<div data-cor={prefs.cor} style={{ backgroundColor: prefs.tema === 'claro' ? 'var(--c-bg-light, #f0f0f5)' : 'var(--c-bg, #0d0f1a)' }} className={`min-h-screen text-white flex flex-col${prefs.tema === 'claro' ? ' light' : ''}`}>
-			<Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} />
+			<Header onAbrirPrefs={() => setModalAberta(true)} tab={tab} onTab={setTab} onNovaNote={novaNote} />
 			<main className={`flex-1 flex justify-center p-6 ${tab === 'banco' ? 'items-start' : 'items-center'}`}>
 				{tab === 'calculadora' ? (
 					<div className="w-full max-w-5xl flex items-center justify-center gap-6">
-						<div className="hidden lg:flex flex-col gap-8 items-end">
-							{prefs.polaroids > 0 && <Polaroid id="1" rotate={-4} />}
-							{prefs.polaroids > 2 && <Polaroid id="2" rotate={3} style={{ marginRight: '1.5rem' }}/>}
-						</div>
-					<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
+						<div className="w-full max-w-2xl flex flex-col gap-4 shrink-0">
 						<div className="flex items-center justify-center gap-3">
 							<p className="text-sm text-white/30 uppercase">
 								{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
@@ -235,10 +279,6 @@ export default function App() {
 							/>
 						</div>
 						</div>
-						<div className="hidden lg:flex flex-col gap-8 items-start">
-							{prefs.polaroids > 0 && <Polaroid id="3" rotate={3} style={{ marginLeft: '1rem' }}/>}
-							{prefs.polaroids > 2 && <Polaroid id="4" rotate={-5}/>}
-						</div>
 					</div>
 				) : (
 					<Historico
@@ -278,6 +318,23 @@ export default function App() {
 					/>
 				)}
 			</main>
+			{tab === 'calculadora' && notas.map(nota => nota.tipo === 'polaroid' ? (
+				<Polaroid
+					key={nota.id}
+					nota={nota}
+					bloqueado={modalAberta}
+					onChange={atualizada => salvarNotas(notas.map(n => n.id === atualizada.id ? atualizada : n))}
+					onRemover={() => salvarNotas(notas.filter(n => n.id !== nota.id))}
+				/>
+			) : (
+				<NotaPost
+					key={nota.id}
+					nota={nota}
+					bloqueado={modalAberta}
+					onChange={atualizada => salvarNotas(notas.map(n => n.id === atualizada.id ? atualizada : n))}
+					onRemover={() => salvarNotas(notas.filter(n => n.id !== nota.id))}
+				/>
+			))}
 			<CardNovidade />
 			<SextouModal />
 			{modalAberta && <PreferenciasModal prefs={prefs} onSalvar={salvarPrefs} onFechar={() => setModalAberta(false)} />}
