@@ -11,7 +11,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 	const corNome = claro ? 'var(--c-text, #1a1a2e)' : '#fff'
 	const corArtista = claro ? 'rgba(26,26,46,0.45)' : 'rgba(255,255,255,0.45)'
 	const [track, setTrack] = useState(null)
-	const [overflow, setOverflow] = useState(false)
+	const containerRef = useRef()
 	const nomeRef = useRef()
 	const [pos, setPos] = useState(() => {
 		try { return JSON.parse(localStorage.getItem('spotify-widget-pos')) ?? { x: 24, y: 100 } }
@@ -32,6 +32,21 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 		const id = setInterval(poll, 10000)
 		return () => { ativo = false; clearInterval(id) }
 	}, [])
+
+	useEffect(() => {
+		const p = nomeRef.current
+		const container = containerRef.current
+		if (!p || !container) return
+		const firstSpan = p.querySelector('span')
+		if (!firstSpan) return
+		const excesso = firstSpan.scrollWidth - container.clientWidth
+		if (excesso > 0) {
+			p.style.setProperty('--marquee-offset', `-${firstSpan.scrollWidth + 32}px`)
+			p.style.animation = 'marquee-spotify 7s linear infinite'
+		} else {
+			p.style.animation = 'none'
+		}
+	}, [track])
 
 	function iniciarArrasto(e) {
 		e.preventDefault()
@@ -138,28 +153,14 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 									boxShadow: '0 0 6px #1db954',
 								}} />
 							)}
-							<div style={{ overflow: 'hidden', minWidth: 0, flex: 1 }}
-								ref={el => {
-									if (!el) return
-									const p = el.querySelector('span')
-									if (!p) return
-									const excesso = p.scrollWidth - el.clientWidth
-									if (excesso > 0) {
-										el.style.setProperty('--marquee-offset', `-${p.scrollWidth + 24}px`)
-										setOverflow(true)
-									} else {
-										setOverflow(false)
-									}
-								}}
-							>
+							<div ref={containerRef} style={{ overflow: 'hidden', minWidth: 0, flex: 1 }}>
 								<p ref={nomeRef} style={{
 									margin: 0, fontSize: '0.85rem', fontWeight: 700,
 									color: corNome, whiteSpace: 'nowrap',
-									display: overflow ? 'flex' : 'block',
-									animation: overflow ? 'marquee-spotify 7s linear infinite' : 'none',
+									display: 'flex',
 								}}>
 									<span>{track.nome}</span>
-									{overflow && <span style={{ paddingLeft: 24 }}>{track.nome}</span>}
+									<span style={{ paddingLeft: 32, flexShrink: 0 }}>{track.nome}</span>
 								</p>
 							</div>
 						</div>
