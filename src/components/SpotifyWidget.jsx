@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { getNowPlaying } from '../utils/spotify'
 
 const HEADER_HEIGHT = 65
+const W = 200
 
 export default function SpotifyWidget() {
 	const [track, setTrack] = useState(null)
@@ -38,8 +39,7 @@ export default function SpotifyWidget() {
 		function mover(e) {
 			const clientX = e.touches ? e.touches[0].clientX : e.clientX
 			const clientY = e.touches ? e.touches[0].clientY : e.clientY
-			const W = ref.current?.offsetWidth ?? 220
-			const H = ref.current?.offsetHeight ?? 64
+			const H = ref.current?.offsetHeight ?? 280
 			const x = Math.min(window.innerWidth - W, Math.max(0, clientX - offsetRef.current.x))
 			const y = Math.min(window.innerHeight - H, Math.max(HEADER_HEIGHT, clientY - offsetRef.current.y))
 			const novaPos = { x, y }
@@ -66,12 +66,11 @@ export default function SpotifyWidget() {
 			ref={ref}
 			style={{
 				position: 'fixed', left: pos.x, top: pos.y,
-				zIndex: 1000, width: 220,
-				userSelect: 'none',
-				boxShadow: arrastando ? '0 12px 32px rgba(0,0,0,0.4)' : '0 4px 20px rgba(0,0,0,0.3)',
+				zIndex: 1000, width: W,
+				userSelect: 'none', cursor: 'default',
+				boxShadow: arrastando ? '0 16px 40px rgba(0,0,0,0.5)' : '0 6px 24px rgba(0,0,0,0.4)',
 				transition: arrastando ? 'none' : 'box-shadow 0.2s',
-				borderRadius: 12, overflow: 'visible',
-				cursor: 'default',
+				borderRadius: 16, overflow: 'visible',
 			}}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
@@ -84,7 +83,7 @@ export default function SpotifyWidget() {
 					position: 'absolute', top: -16, left: 0, right: 0, height: 16,
 					background: '#1db954',
 					filter: 'brightness(0.85)',
-					borderRadius: '8px 8px 0 0',
+					borderRadius: '10px 10px 0 0',
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
 					cursor: arrastando ? 'grabbing' : 'grab',
 					opacity: hover || arrastando ? 1 : 0,
@@ -92,7 +91,7 @@ export default function SpotifyWidget() {
 					pointerEvents: hover || arrastando ? 'auto' : 'none',
 				}}
 			>
-				<span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: 3 }}>• • •</span>
+				<span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', letterSpacing: 4 }}>• • •</span>
 			</div>
 
 			{/* card */}
@@ -100,32 +99,52 @@ export default function SpotifyWidget() {
 				href={track.url}
 				target="_blank"
 				rel="noreferrer"
-				style={{ textDecoration: 'none' }}
 				onMouseDown={e => e.stopPropagation()}
+				style={{ textDecoration: 'none', display: 'block' }}
 			>
 				<div style={{
-					background: '#121212',
-					borderRadius: hover || arrastando ? '0 0 12px 12px' : 12,
+					background: '#181818',
+					borderRadius: hover || arrastando ? '0 0 16px 16px' : 16,
 					transition: 'border-radius 0.15s',
-					display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
-					overflow: 'hidden',
+					padding: 14,
+					display: 'flex', flexDirection: 'column', gap: 12,
 				}}>
-					{track.capa && (
-						<img src={track.capa} alt="" style={{ width: 44, height: 44, borderRadius: 4, flexShrink: 0, objectFit: 'cover' }} />
-					)}
-					<div style={{ minWidth: 0, flex: 1 }}>
-						<div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+					{/* capa */}
+					<div style={{
+						width: '100%', aspectRatio: '1',
+						borderRadius: 10, overflow: 'hidden',
+						background: '#2a2a2a',
+						flexShrink: 0,
+					}}>
+						{track.capa
+							? <img src={track.capa} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+							: <div style={{ width: '100%', height: '100%', background: '#2a2a2a' }} />
+						}
+					</div>
+
+					{/* info */}
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
 							{track.tocando && (
-								<span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1db954', flexShrink: 0, animation: 'pulse 1.5s infinite' }} />
+								<span style={{
+									width: 6, height: 6, borderRadius: '50%',
+									background: '#1db954', flexShrink: 0,
+									boxShadow: '0 0 6px #1db954',
+								}} />
 							)}
-							<span style={{ fontSize: '0.65rem', color: '#1db954', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-								Spotify
-							</span>
+							<p style={{
+								margin: 0, fontSize: '0.85rem', fontWeight: 700,
+								color: '#fff', whiteSpace: 'nowrap',
+								overflow: 'hidden', textOverflow: 'ellipsis',
+							}}>
+								{track.nome}
+							</p>
 						</div>
-						<p style={{ fontSize: '0.8rem', color: '#fff', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
-							{track.nome}
-						</p>
-						<p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
+						<p style={{
+							margin: 0, fontSize: '0.75rem',
+							color: 'rgba(255,255,255,0.45)',
+							whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+						}}>
 							{track.artista}
 						</p>
 					</div>
