@@ -11,6 +11,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 	const corNome = claro ? 'var(--c-text, #1a1a2e)' : '#fff'
 	const corArtista = claro ? 'rgba(26,26,46,0.45)' : 'rgba(255,255,255,0.45)'
 	const [track, setTrack] = useState(null)
+	const [overflow, setOverflow] = useState(false)
 	const containerRef = useRef()
 	const nomeRef = useRef()
 	const [pos, setPos] = useState(() => {
@@ -43,8 +44,10 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 		if (excesso > 0) {
 			p.style.setProperty('--marquee-offset', `-${firstSpan.scrollWidth + 32}px`)
 			p.style.animation = 'marquee-spotify 7s linear infinite'
+			setOverflow(true)
 		} else {
 			p.style.animation = 'none'
+			setOverflow(false)
 		}
 	}, [track])
 
@@ -160,7 +163,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 									display: 'flex',
 								}}>
 									<span>{track.nome}</span>
-									<span style={{ paddingLeft: 32, flexShrink: 0 }}>{track.nome}</span>
+									{overflow && <span style={{ paddingLeft: 32, flexShrink: 0 }}>{track.nome}</span>}
 								</p>
 							</div>
 						</div>
