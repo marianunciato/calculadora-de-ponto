@@ -81,6 +81,7 @@ export default function App() {
 	})
 	const [notas, setNotas] = useState(loadNotas)
 	const [spotifyOk, setSpotifyOk] = useState(spotifyConectado)
+	const [larguraTela, setLarguraTela] = useState(window.innerWidth)
 	const [saidaReal, setSaidaReal] = useState('')
 	const [tick, setTick] = useState(0)
 
@@ -126,6 +127,14 @@ export default function App() {
 		window.history.replaceState({}, '', '/')
 		trocarCodigoPorToken(code).then(() => setSpotifyOk(true))
 	}, [])
+
+	useEffect(() => {
+		function onResize() { setLarguraTela(window.innerWidth) }
+		window.addEventListener('resize', onResize)
+		return () => window.removeEventListener('resize', onResize)
+	}, [])
+
+	const widgetsVisiveis = larguraTela >= 1155
 
 	function salvarPrefs(novasPrefs) {
 		setPrefs(novasPrefs)
@@ -330,8 +339,8 @@ export default function App() {
 					/>
 				)}
 			</main>
-			{tab === 'calculadora' && spotifyOk && <SpotifyWidget bloqueado={modalAberta} tema={prefs.tema} cor={prefs.cor} />}
-			{tab === 'calculadora' && notas.map(nota => nota.tipo === 'polaroid' ? (
+			{tab === 'calculadora' && widgetsVisiveis && spotifyOk && <SpotifyWidget bloqueado={modalAberta} tema={prefs.tema} cor={prefs.cor} />}
+			{tab === 'calculadora' && widgetsVisiveis && notas.map(nota => nota.tipo === 'polaroid' ? (
 				<Polaroid
 					key={nota.id}
 					nota={nota}
