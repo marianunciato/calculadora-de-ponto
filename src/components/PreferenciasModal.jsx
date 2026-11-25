@@ -125,7 +125,7 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 				{/* Integrações */}
 				<div className="flex flex-col gap-2">
 					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Integrações</p>
-					<Row label="Spotify" desc={conectado ? 'Mostra a música tocando na tela' : 'Veja o que está tocando agora'}>
+					<Row label={<span className="flex items-center gap-2">Spotify <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#1db95422', color: '#1db954', fontSize: '0.6rem', letterSpacing: '0.1em' }}>BETA</span></span>} desc={conectado ? 'Mostra a música tocando na tela' : 'Veja o que está tocando agora'}>
 						{conectado ? (
 							<button
 								onClick={() => { desconectarSpotify(); setConectado(false) }}

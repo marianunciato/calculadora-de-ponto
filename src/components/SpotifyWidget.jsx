@@ -4,7 +4,12 @@ import { getNowPlaying } from '../utils/spotify'
 const HEADER_HEIGHT = 65
 const W = 200
 
-export default function SpotifyWidget() {
+export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor = 'roxo' }) {
+	const claro = tema === 'claro'
+	const bgCard = claro ? 'var(--c-card-light, #fff)' : '#181818'
+	const bgCapa = claro ? 'var(--c-card2-light, #eee)' : '#2a2a2a'
+	const corNome = claro ? 'var(--c-text, #1a1a2e)' : '#fff'
+	const corArtista = claro ? 'rgba(26,26,46,0.45)' : 'rgba(255,255,255,0.45)'
 	const [track, setTrack] = useState(null)
 	const [pos, setPos] = useState(() => {
 		try { return JSON.parse(localStorage.getItem('spotify-widget-pos')) ?? { x: 24, y: 100 } }
@@ -66,7 +71,7 @@ export default function SpotifyWidget() {
 			ref={ref}
 			style={{
 				position: 'fixed', left: pos.x, top: pos.y,
-				zIndex: 1000, width: W,
+				zIndex: bloqueado ? 10 : 1000, width: W,
 				userSelect: 'none', cursor: 'default',
 				boxShadow: arrastando ? '0 16px 40px rgba(0,0,0,0.5)' : '0 6px 24px rgba(0,0,0,0.4)',
 				transition: arrastando ? 'none' : 'box-shadow 0.2s',
@@ -103,7 +108,7 @@ export default function SpotifyWidget() {
 				style={{ textDecoration: 'none', display: 'block' }}
 			>
 				<div style={{
-					background: '#181818',
+					background: bgCard,
 					borderRadius: hover || arrastando ? '0 0 16px 16px' : 16,
 					transition: 'border-radius 0.15s',
 					padding: 14,
@@ -113,8 +118,7 @@ export default function SpotifyWidget() {
 					<div style={{
 						width: '100%', aspectRatio: '1',
 						borderRadius: 10, overflow: 'hidden',
-						background: '#2a2a2a',
-						flexShrink: 0,
+						background: bgCapa, flexShrink: 0,
 					}}>
 						{track.capa
 							? <img src={track.capa} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -134,7 +138,7 @@ export default function SpotifyWidget() {
 							)}
 							<p style={{
 								margin: 0, fontSize: '0.85rem', fontWeight: 700,
-								color: '#fff', whiteSpace: 'nowrap',
+								color: corNome, whiteSpace: 'nowrap',
 								overflow: 'hidden', textOverflow: 'ellipsis',
 							}}>
 								{track.nome}
@@ -142,7 +146,7 @@ export default function SpotifyWidget() {
 						</div>
 						<p style={{
 							margin: 0, fontSize: '0.75rem',
-							color: 'rgba(255,255,255,0.45)',
+							color: corArtista,
 							whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
 						}}>
 							{track.artista}

@@ -330,7 +330,7 @@ export default function App() {
 					/>
 				)}
 			</main>
-			{tab === 'calculadora' && spotifyOk && <SpotifyWidget />}
+			{tab === 'calculadora' && spotifyOk && <SpotifyWidget bloqueado={modalAberta} tema={prefs.tema} cor={prefs.cor} />}
 			{tab === 'calculadora' && notas.map(nota => nota.tipo === 'polaroid' ? (
 				<Polaroid
 					key={nota.id}
