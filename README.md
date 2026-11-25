@@ -24,22 +24,26 @@ Uma aplicação web para calcular e acompanhar a jornada de trabalho diária de 
 - **Persistência Local:** Dados salvos via `localStorage` (horários do dia, histórico e preferências).
 - **Mensagem Diária:** Mensagem motivacional exibida na tela principal (`MensagemDiaria`).
 - **Card de Novidades:** Notificação dispensável no canto inferior direito para anunciar atualizações aos usuários (`CardNovidade`).
+- **Widgets:** Novos widgets arrastáveis e customizáveis de nota, checklist (`NotaPost`) e Polaroid (`Polaroid`).
 
 ## 🗂️ Estrutura do Projeto
 
 ```
 src/
 ├── components/
-│   ├── Header.jsx
+│   ├── CardNovidade.jsx
 │   ├── Footer.jsx
-│   ├── JornadaInput.jsx
-│   ├── TimeInput.jsx
-│   ├── Resultado.jsx
-│   ├── ProgressBar.jsx
+│   ├── Header.jsx
 │   ├── Historico.jsx
+│   ├── JornadaInput.jsx
 │   ├── MensagemDiaria.jsx
+│   ├── NotaPost.jsx
+│   ├── Polaroid.jsx
 │   ├── PreferenciasModal.jsx
-│   └── CardNovidade.jsx
+│   ├── ProgressBar.jsx
+│   ├── Resultado.jsx
+│   ├── SextouModal.jsx
+│   └── TimeInput.jsx
 ├── utils/
 │   ├── time.js
 │   └── alertas.js

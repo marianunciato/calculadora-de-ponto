@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CloseIcon from '@mui/icons-material/Close'
+import { iniciarLoginSpotify, desconectarSpotify, spotifyConectado } from '../utils/spotify'
 
 const JORNADAS = ['04:00', '06:00', '08:00', '08:48', '12:00']
 
@@ -39,6 +40,7 @@ function Row({ label, desc, children }) {
 
 export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 	const [local, setLocal] = useState(prefs)
+	const [conectado, setConectado] = useState(spotifyConectado)
 	const set = (key, val) => setLocal(p => ({ ...p, [key]: val }))
 
 	return (
@@ -117,6 +119,29 @@ export default function PreferenciasModal({ prefs, onSalvar, onFechar }) {
 					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Alertas</p>
 					<Row label="Notificar fim do expediente" desc="Envia um alerta sonoro quando zerar">
 						<Toggle checked={local.notificarFim} onChange={v => set('notificarFim', v)} />
+					</Row>
+				</div>
+
+				{/* Integrações */}
+				<div className="flex flex-col gap-2">
+					<p className="text-xs font-bold tracking-[0.25em] text-white/40 uppercase">Integrações</p>
+					<Row label="Spotify" desc={conectado ? 'Mostra a música tocando na tela' : 'Veja o que está tocando agora'}>
+						{conectado ? (
+							<button
+								onClick={() => { desconectarSpotify(); setConectado(false) }}
+								className="text-xs text-white/40 hover:text-red-400 transition-colors cursor-pointer"
+							>
+								Desconectar
+							</button>
+						) : (
+							<button
+								onClick={iniciarLoginSpotify}
+								className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+								style={{ background: '#1db954', color: '#000' }}
+							>
+								Conectar
+							</button>
+						)}
 					</Row>
 				</div>
 

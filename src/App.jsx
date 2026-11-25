@@ -14,6 +14,8 @@ import CardNovidade from './components/CardNovidade'
 import SextouModal from './components/SextouModal'
 import Polaroid from './components/Polaroid'
 import NotaPost from './components/NotaPost'
+import SpotifyWidget from './components/SpotifyWidget'
+import { trocarCodigoPorToken, spotifyConectado } from './utils/spotify'
 import { toMinutes, fromMinutes } from './utils/time'
 import { getAlertas } from './utils/alertas'
 
@@ -78,6 +80,7 @@ export default function App() {
 		catch { return [] }
 	})
 	const [notas, setNotas] = useState(loadNotas)
+	const [spotifyOk, setSpotifyOk] = useState(spotifyConectado)
 	const [saidaReal, setSaidaReal] = useState('')
 	const [tick, setTick] = useState(0)
 
@@ -114,6 +117,15 @@ export default function App() {
 			: { titulo: '', linhas: [{ id: Date.now(), texto: '', feito: false }], texto: '' }
 		salvarNotas([...notas, { ...base, ...extra }])
 	}
+
+	// processar callback OAuth do Spotify
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search)
+		const code = params.get('code')
+		if (!code) return
+		window.history.replaceState({}, '', '/')
+		trocarCodigoPorToken(code).then(() => setSpotifyOk(true))
+	}, [])
 
 	function salvarPrefs(novasPrefs) {
 		setPrefs(novasPrefs)
@@ -318,6 +330,7 @@ export default function App() {
 					/>
 				)}
 			</main>
+			{tab === 'calculadora' && spotifyOk && <SpotifyWidget />}
 			{tab === 'calculadora' && notas.map(nota => nota.tipo === 'polaroid' ? (
 				<Polaroid
 					key={nota.id}
