@@ -82,11 +82,11 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 		>
 			{/* barra de drag */}
 			<div
+			    className="spotify-widget-drag-handle accent-bg accent-bg-hover transition-colors"
 				onMouseDown={iniciarArrasto}
 				onTouchStart={iniciarArrasto}
 				style={{
 					position: 'absolute', top: -16, left: 0, right: 0, height: 16,
-					background: '#1db954',
 					filter: 'brightness(0.85)',
 					borderRadius: '10px 10px 0 0',
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
