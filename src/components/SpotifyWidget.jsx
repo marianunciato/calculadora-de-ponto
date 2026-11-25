@@ -6,8 +6,8 @@ const W = 200
 
 export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor = 'roxo' }) {
 	const claro = tema === 'claro'
-	const bgCard = claro ? 'var(--c-card-light, #fff)' : '#181818'
-	const bgCapa = claro ? 'var(--c-card2-light, #eee)' : '#2a2a2a'
+	const bgCard = claro ? 'var(--c-card-light, #fff)' : 'var(--c-card, #181818)'
+	const bgCapa = claro ? 'var(--c-card2-light, #eee)' : 'var(--c-card2, #2a2a2a)'
 	const corNome = claro ? 'var(--c-text, #1a1a2e)' : '#fff'
 	const corArtista = claro ? 'rgba(26,26,46,0.45)' : 'rgba(255,255,255,0.45)'
 	const [track, setTrack] = useState(null)
