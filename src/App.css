@@ -93,8 +93,8 @@
 .light .border-white\/10.hover\:border-white\/30 { border-color: rgba(0,0,0,0.2) !important; }
 
 /* Acento via variável CSS */
-.accent-bg          { background-color: var(--accent) !important; color: var(--accent-text-color, #ffffff) !important; }
-.accent-bg-hover:hover { background-color: var(--accent-hover) !important; }
+.accent-bg          { background-color: var(--accent) !important; color: var(--accent-text-color, #ffffff) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15); }
+.accent-bg-hover:hover { background-color: var(--accent-hover) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1); }
 .accent-bg-light    { background-color: var(--accent-light) !important; }
 .accent-bg-muted    { background-color: var(--accent-muted) !important; }
 .accent-text        { color: var(--accent) !important; }

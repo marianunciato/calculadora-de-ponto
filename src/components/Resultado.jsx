@@ -45,7 +45,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				<p className="text-xs font-bold tracking-[0.25em] uppercase text-white/60">Seu horário de saída é</p>
 			</div>
 
-			<div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2">
+			<div className="bg-[#1e2030] rounded-2xl p-6 flex flex-col items-center gap-2" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), 0 2px 12px rgba(0,0,0,0.15)', background: 'linear-gradient(160deg, var(--c-card2, #1e2030) 0%, var(--c-card, #161827) 100%)' }}>
 				{todosPreenchidos ? (
 					<>
 						<span className="text-6xl font-thin tracking-widest">{saida}</span>
@@ -62,7 +62,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 			<ProgressBar entrada={entrada} saida={saida} almoco={almoco} retorno={retorno} jornada={jornada} tick={tick} />
 
 			{todosPreenchidos && (
-				<div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4">
+				<div className="bg-[#1e2030] rounded-2xl p-4 flex items-center justify-between gap-4" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 6px rgba(0,0,0,0.1)' }}>
 					<div className="flex items-center gap-3">
 						<ExitToAppIcon className="text-green-400" fontSize="small" />
 						<div>

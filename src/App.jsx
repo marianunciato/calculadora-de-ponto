@@ -267,7 +267,7 @@ export default function App() {
 							<Relogio />
 						</div>
 						<div className="animate-card" style={{ animationDelay: '0ms' }}><MensagemDiaria /></div>
-						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4" style={{ animationDelay: '80ms' }}>
+						<div className="animate-card bg-[#161827] rounded-3xl p-6 flex flex-col gap-4 drop-shadow-2xl" style={{ animationDelay: '80ms', boxShadow: '0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.02)' }}>
 							<JornadaInput value={jornada} onAbrirPrefs={() => setModalAberta(true)} />
 							<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 								<TimeInput label="Entrada" icon={<MeetingRoomIcon fontSize="small" />} value={entrada} onChange={setEntrada} />

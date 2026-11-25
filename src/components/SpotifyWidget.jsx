@@ -75,7 +75,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 				userSelect: 'none', cursor: 'default',
 				boxShadow: arrastando ? '0 16px 40px rgba(0,0,0,0.4)' : '0 6px 24px rgba(0,0,0,0.3)',
 				transition: arrastando ? 'none' : 'box-shadow 0.2s',
-				borderRadius: 16, overflow: 'visible',
+				borderRadius: 10, overflow: 'visible',
 			}}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
@@ -88,7 +88,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 				style={{
 					position: 'absolute', top: -16, left: 0, right: 0, height: 16,
 					filter: 'brightness(0.85)',
-					borderRadius: '10px 10px 0 0',
+					borderRadius: '8px 8px 0 0',
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
 					cursor: arrastando ? 'grabbing' : 'grab',
 					opacity: hover || arrastando ? 1 : 0,
@@ -109,7 +109,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 			>
 				<div style={{
 					background: bgCard,
-					borderRadius: hover || arrastando ? '0 0 16px 16px' : 16,
+					borderRadius: hover || arrastando ? '0 0 10px 10px' : 10,
 					transition: 'border-radius 0.15s',
 					padding: 14,
 					display: 'flex', flexDirection: 'column', gap: 12,
