@@ -11,6 +11,8 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 	const corNome = claro ? 'var(--c-text, #1a1a2e)' : '#fff'
 	const corArtista = claro ? 'rgba(26,26,46,0.45)' : 'rgba(255,255,255,0.45)'
 	const [track, setTrack] = useState(null)
+	const [overflow, setOverflow] = useState(false)
+	const nomeRef = useRef()
 	const [pos, setPos] = useState(() => {
 		try { return JSON.parse(localStorage.getItem('spotify-widget-pos')) ?? { x: 24, y: 100 } }
 		catch { return { x: 24, y: 100 } }
@@ -136,13 +138,29 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 									boxShadow: '0 0 6px #1db954',
 								}} />
 							)}
-							<p style={{
-								margin: 0, fontSize: '0.85rem', fontWeight: 700,
-								color: corNome, whiteSpace: 'nowrap',
-								overflow: 'hidden', textOverflow: 'ellipsis',
-							}}>
-								{track.nome}
-							</p>
+							<div style={{ overflow: 'hidden', minWidth: 0, flex: 1 }}
+								ref={el => {
+									if (!el) return
+									const p = el.querySelector('p')
+									if (!p) return
+									const excesso = p.scrollWidth - el.clientWidth
+									if (excesso > 0) {
+										p.style.setProperty('--marquee-offset', `-${excesso}px`)
+										setOverflow(true)
+									} else {
+										setOverflow(false)
+									}
+								}}
+							>
+								<p ref={nomeRef} style={{
+									margin: 0, fontSize: '0.85rem', fontWeight: 700,
+									color: corNome, whiteSpace: 'nowrap',
+									display: 'inline-block',
+									animation: overflow ? 'marquee-spotify 6s linear infinite' : 'none',
+								}}>
+									{track.nome}
+								</p>
+							</div>
 						</div>
 						<p style={{
 							margin: 0, fontSize: '0.75rem',

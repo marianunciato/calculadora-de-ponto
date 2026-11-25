@@ -146,6 +146,7 @@ export default function Resultado({ saida, faltam, alertas, onLimpar, onRegistra
 				target="_blank"
 				rel="noreferrer"
 				className="hidden lg:flex items-center justify-center accent-bg accent-bg-hover transition-colors rounded-2xl py-4 text-sm font-bold tracking-[0.25em] uppercase w-full"
+				style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)', boxShadow: '0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15)' }}
 			>
 				Ir para página de ponto
 			</a>
