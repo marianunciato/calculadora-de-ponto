@@ -73,7 +73,7 @@ export default function SpotifyWidget({ bloqueado = false, tema = 'escuro', cor 
 				position: 'fixed', left: pos.x, top: pos.y,
 				zIndex: bloqueado ? 10 : 1000, width: W,
 				userSelect: 'none', cursor: 'default',
-				boxShadow: arrastando ? '0 16px 40px rgba(0,0,0,0.5)' : '0 6px 24px rgba(0,0,0,0.4)',
+				boxShadow: arrastando ? '0 16px 40px rgba(0,0,0,0.4)' : '0 6px 24px rgba(0,0,0,0.3)',
 				transition: arrastando ? 'none' : 'box-shadow 0.2s',
 				borderRadius: 16, overflow: 'visible',
 			}}
